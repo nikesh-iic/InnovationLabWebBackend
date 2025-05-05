@@ -1,8 +1,8 @@
 ﻿using InnovationLabBackend.Api.Interfaces;
-using InnovationLabBackend.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using InnovationLabBackend.Api.Mapper;
 using InnovationLabBackend.Api.DTO.Testimonials;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InnovationLabBackend.Api.Controllers
 {
@@ -15,6 +15,7 @@ namespace InnovationLabBackend.Api.Controllers
         {
             _testimonials = testimonials;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetTestimonials()
         {
@@ -22,6 +23,8 @@ namespace InnovationLabBackend.Api.Controllers
             var testimonialsDTO = testimonials.Select(s=> s.ToTestimonialsDTO());
             return Ok(testimonialsDTO);
         }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateTestimonial([FromBody] CreateTestimonialsDTO testimonial)
         {
@@ -29,7 +32,6 @@ namespace InnovationLabBackend.Api.Controllers
             var createdTestimonial = await _testimonials.CreateTestimonialAsync(newTestimonial);
 
             return CreatedAtAction(nameof(GetTestimonials), new { id = createdTestimonial.Id }, createdTestimonial);
-          
         }
 
 
