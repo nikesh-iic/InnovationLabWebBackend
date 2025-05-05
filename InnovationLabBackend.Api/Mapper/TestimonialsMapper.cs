@@ -1,6 +1,5 @@
 ﻿using InnovationLabBackend.Api.DTO.Testimonials;
 using InnovationLabBackend.Api.Models;
-using System.Runtime.CompilerServices;
 
 namespace InnovationLabBackend.Api.Mapper
 {
