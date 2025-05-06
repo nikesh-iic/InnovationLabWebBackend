@@ -1,74 +1,49 @@
-﻿using InnovationLabBackend.Api.DTO.Testimonials;
+﻿using InnovationLabBackend.Api.DbContext;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InnovationLabBackend.Api.Repository
 {
-    public class TestimonialsRepo : ITestimonials
-
+    public class TestimonialsRepo(InnovationLabDbContext dbContext) : ITestimonialsRepo
     {
-        private readonly List<Testimonial> _testimonials = new List<Testimonial>
-        {
-            new Testimonial
-            {
-                Id = "1",
-                Name = "Ram",
-                Text = "This is a great service!",
-                Designation = "Software Engineer",
-                Organization = "Tech Company",
-                ImageUrl = "https://example.com/image.jpg"
-            },
-            new Testimonial
-            {
-                Id = "2",
-                Name = "Sitaa",
-                Text = "I had an amazing experience!",
-                Designation = "Product Manager",
-                Organization = "Another Company",
-                ImageUrl = "https://example.com/image2.jpg"
-            }
-        };
-        public Task<Testimonial> CreateTestimonialAsync(Testimonial testimonial)
-        {
-            testimonial.Id = Guid.NewGuid().ToString();
-            testimonial.CreatedAt = DateTime.UtcNow;
-            _testimonials.Add(testimonial);
-            return Task.FromResult(testimonial);
-        }
-
-
-
-        public Task<bool> DeleteTestimonialAsync(string id)
-        {
-            var newId = _testimonials.FirstOrDefault(x=>x.Id == id);
-            if (newId != null)
-            {
-                _testimonials.Remove(newId);
-                return Task.FromResult(true);
-            }
-            return Task.FromResult(false);
-        }
-
-        public  Task<List<Testimonial>> GetTestimonialsAsync()
-        {
-            return Task.FromResult(_testimonials.ToList());
-        }
-
+        private readonly InnovationLabDbContext _dbContext = dbContext;
         
-
-public Task<Testimonial?> UpdateTestimonialAsync(string id, UpdateTestimonialsDTO testimonial)
+        private async Task<bool> SaveChangesAsync()
         {
-            var existingTestimonial = _testimonials.FirstOrDefault(x => x.Id == id);
-            if (existingTestimonial != null)
-            {
-                existingTestimonial.Name = testimonial.Name ?? existingTestimonial.Name;
-                existingTestimonial.Text = testimonial.Text ?? existingTestimonial.Text;
-                existingTestimonial.Designation = testimonial.Designation ?? existingTestimonial.Designation;
-                existingTestimonial.Organization = testimonial.Organization ?? existingTestimonial.Organization;
-                existingTestimonial.ImageUrl = testimonial.ImageUrl ?? existingTestimonial.ImageUrl;
-                return Task.FromResult<Testimonial?>(existingTestimonial); 
-            }
-            return Task.FromResult<Testimonial?>(null);
+            return await _dbContext.SaveChangesAsync() != 0;
+        }
+
+        public async Task<List<Testimonial>> GetTestimonialsAsync()
+        {
+            var testimonials = await _dbContext.Testimonials.ToListAsync();
+            return testimonials;
+        }
+
+        public async Task<Testimonial?> GetTestimonialByIdAsync(Guid id)
+        {
+            var testimonial = await _dbContext.Testimonials.FirstOrDefaultAsync(t => t.Id == id);
+            return testimonial;
+        }
+
+        public async Task<Testimonial> CreateTestimonialAsync(Testimonial testimonial)
+        {
+            await _dbContext.Testimonials.AddAsync(testimonial);
+            await SaveChangesAsync();
+            return testimonial;
+        }
+
+        public async Task UpdateTestimonialAsync(Testimonial testimonial)
+        {
+            testimonial.UpdatedAt = DateTimeOffset.UtcNow;
+            await SaveChangesAsync();
+        }
+
+        public async Task DeleteTestimonialAsync(Testimonial testimonial)
+        {
+            testimonial.IsDeleted = true;
+            testimonial.DeletedAt = DateTimeOffset.UtcNow;
+            await SaveChangesAsync();
         }
     }
 }

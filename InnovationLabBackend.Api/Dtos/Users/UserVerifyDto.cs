@@ -1,14 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InnovationLabBackend.Api.DTO.Users
+namespace InnovationLabBackend.Api.Dtos.Users
 {
-    public class UserLoginDTO
+    public class UserVerifyDto
     {
         [Required]
         [EmailAddress]
         public required string Email { get; set; }
 
         [Required]
-        public required string Password { get; set; }
+        [MinLength(6)]
+        [MaxLength(6)]
+        public required string Otp { get; set; }
     }
 }

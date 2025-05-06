@@ -1,7 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using InnovationLabBackend.Api.DTO.Users;
+using AutoMapper;
+using InnovationLabBackend.Api.Dtos.Users;
 using InnovationLabBackend.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,20 +11,21 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace InnovationLabBackend.Api.Controllers
 {
-    [Route("api/v1/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Route("api/v1/[controller]")]
+    public class AuthController(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IConfiguration configuration,
+        IMapper mapper
+    ) : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly IConfiguration _configuration;
-
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
-        }
+        private readonly UserManager<User> _userManager = userManager;
+        private readonly SignInManager<User> _signInManager = signInManager;
+        private readonly IConfiguration _configuration = configuration;
+        private readonly IMapper _mapper = mapper;
 
         private async Task<string> GenerateJwtToken(User user)
         {
@@ -41,11 +43,11 @@ namespace InnovationLabBackend.Api.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(new ClaimsIdentityOptions().SecurityStampClaimType, await _userManager.GetSecurityStampAsync(user))
+                new (JwtRegisteredClaimNames.Sub, user.Id),
+                new (JwtRegisteredClaimNames.Email, user.Email!),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new (ClaimTypes.NameIdentifier, user.Id),
+                new (new ClaimsIdentityOptions().SecurityStampClaimType, await _userManager.GetSecurityStampAsync(user))
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -69,23 +71,15 @@ namespace InnovationLabBackend.Api.Controllers
             return tokenHandler.WriteToken(token);
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegisterDTO registerDto)
+        [HttpPost("register", Name = "Register")]
+        public async Task<ActionResult<UserRegisterResponseDto>> Register([FromBody] UserRegisterDto registerDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = new User
-            {
-                UserName = registerDto.Email,
-                Email = registerDto.Email,
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName,
-                CreatedAt = DateTimeOffset.UtcNow,
-                IsActive = true
-            };
+            var user = _mapper.Map<User>(registerDto);
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
@@ -98,7 +92,13 @@ namespace InnovationLabBackend.Api.Controllers
                 const string issuer = "InnovationLab";
                 var qrCodeUri = $"otpauth://totp/{issuer}:{user.Email}?secret={secret}&issuer={issuer}&digits=6";
 
-                return Ok(new { Message = "User registered successfully", QrCodeUri = qrCodeUri });
+                var response = new UserRegisterResponseDto
+                {
+                    Message = "User registered successfully",
+                    QrCodeUri = qrCodeUri
+                };
+
+                return Ok(response);
             }
 
             foreach (var error in result.Errors)
@@ -108,8 +108,8 @@ namespace InnovationLabBackend.Api.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginDTO loginDto)
+        [HttpPost("login", Name = "Login")]
+        public async Task<ActionResult<UserLoginResponseDto>> Login([FromBody] UserLoginDto loginDto)
         {
             if (!ModelState.IsValid)
             {
@@ -131,12 +131,14 @@ namespace InnovationLabBackend.Api.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: false);
                 }
 
-                return Ok(new
+                var response = new UserLoginResponseDto
                 {
                     Message = "Two-factor authentication is required",
                     Requires2fa = true,
                     Email = user.Email
-                });
+                };
+
+                return Ok(response);
             }
 
             if (result.IsLockedOut)
@@ -146,38 +148,39 @@ namespace InnovationLabBackend.Api.Controllers
             return Unauthorized(new { Message = "Invalid credentials" });
         }
 
-        [HttpPost("verify")]
-        public async Task<IActionResult> VerifyOtp([FromBody] UserVerifyDTO userVerifyDTO)
+        [HttpPost("verify", Name = "VerifyOtp")]
+        public async Task<ActionResult<UserVerifyResponseDto>> VerifyOtp([FromBody] UserVerifyDto userVerifyDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = await _userManager.FindByEmailAsync(userVerifyDTO.Email);
+            var user = await _userManager.FindByEmailAsync(userVerifyDto.Email);
             if (user == null)
             {
                 return Unauthorized(new { Message = "Invalid user" });
             }
 
-            var isValidOtp = await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, userVerifyDTO.Otp);
+            var isValidOtp = await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, userVerifyDto.Otp);
 
             if (!isValidOtp)
             {
                 return Unauthorized(new { Message = "Invalid or expired otp" });
             }
 
-            var token = await GenerateJwtToken(user);
-            return Ok(new
+            var response = new UserVerifyResponseDto
             {
                 Message = "Login successful",
-                Token = token
-            });
+                Token = await GenerateJwtToken(user)
+            };
+
+            return Ok(response);
         }
 
         [Authorize]
-        [HttpGet("profile")]
-        public async Task<IActionResult> GetUserInfo()
+        [HttpGet("profile", Name = "GetProfile")]
+        public async Task<ActionResult<UserResponseDto>> GetProfile()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -185,20 +188,13 @@ namespace InnovationLabBackend.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(new
-            {
-                user.Id,
-                user.FirstName,
-                user.LastName,
-                user.Email,
-                user.CreatedAt,
-                user.IsActive
-            });
+            var userDto = _mapper.Map<UserResponseDto>(user);
+            return Ok(userDto);
         }
 
         [Authorize]
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        [HttpPost("logout", Name = "Logout")]
+        public async Task<ActionResult> Logout()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)

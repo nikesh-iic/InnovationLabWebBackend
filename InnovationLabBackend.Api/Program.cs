@@ -52,6 +52,9 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<InnovationLabDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DbConnection")));
 
+// Initialize AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 // Configure Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -87,7 +90,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Add dependency injections for repositories
-builder.Services.AddScoped<ITestimonials, TestimonialsRepo>();
+builder.Services.AddScoped<ITestimonialsRepo, TestimonialsRepo>();
 
 var app = builder.Build();
 
@@ -95,6 +98,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<InnovationLabDbContext>();
+    db.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
