@@ -6,6 +6,6 @@ namespace InnovationLabBackend.Api.DbContext
 {
     public class InnovationLabDbContext(DbContextOptions<InnovationLabDbContext> options) : IdentityDbContext<User>(options)
     {
-
+        public DbSet<Testimonial> Testimonials { get; set; }
     }
 }
