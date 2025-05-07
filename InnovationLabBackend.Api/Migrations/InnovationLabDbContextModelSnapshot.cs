@@ -59,7 +59,7 @@ namespace InnovationLabBackend.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Testimonials");
+                    b.ToTable("Testimonials", (string)null);
                 });
 
             modelBuilder.Entity("InnovationLabBackend.Api.Models.User", b =>
