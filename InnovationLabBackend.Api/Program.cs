@@ -1,8 +1,12 @@
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using DotNetEnv;
 using InnovationLabBackend.Api.DbContext;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using InnovationLabBackend.Api.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +19,10 @@ var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+Env.Load();
+Cloudinary cloudinary = new(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+cloudinary.Api.Secure = true;
 
 // Swagger Configuration
 builder.Services.AddSwaggerGen(options =>
@@ -51,6 +59,8 @@ builder.Services.AddSwaggerGen(options =>
 // Add database connection using connection string
 builder.Services.AddDbContext<InnovationLabDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DbConnection")));
+
+
 
 // Initialize AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

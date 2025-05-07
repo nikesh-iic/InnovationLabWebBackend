@@ -1,0 +1,51 @@
+# Build results
+bin/
+obj/
+out/
+[Dd]ebug*/
+[Rr]elease*/
+
+# Rider
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET & Razor specific
+*.dbmdl
+*.dbml
+*.pdb
+*.cache
+*.log
+*.vspscc
+
+# Entity Framework
+Migrations/
+
+# Configuration files
+.env
+*.secret.json
+appsettings.Development.json
+appsettings.Local.json
+
+
+# Logs
+*.log
+
+# Package management
+packages/
+*.nupkg
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Others
+*.swp
+*.bak
+*.tmp
