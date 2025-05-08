@@ -1,0 +1,38 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace InnovationLabBackend.Api.Models
+{
+    public class Event
+    {
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid? ParentEventId { get; set; }
+        [ForeignKey(nameof(ParentEventId))]
+        public Event? ParentEvent { get; set; }
+        [Required]
+        public required string Title { get; set; }
+        [Required]
+        public required string Description { get; set; }
+        [Required]
+        public required DateTimeOffset StartTime { get; set; }
+        [Required]
+        public required DateTimeOffset EndTime { get; set; }
+        [Required]
+        public required string Location { get; set; }
+        [Required]
+        public required string CoverImageUrl { get; set; }
+        public string? SeriesName { get; set; }
+        [Required]
+        public required bool IsTeamEvent { get; set; }
+        public int? MaxTeamMembers { get; set; }
+        [Required]
+        public required DateTimeOffset RegistrationStart { get; set; }
+        [Required]
+        public required DateTimeOffset RegistrationEnd { get; set; }
+        [Required]
+        public required DateTimeOffset CreatedAt { get; set; }
+        [Required]
+        public required DateTimeOffset UpdatedAt { get; set; }
+    }
+}
