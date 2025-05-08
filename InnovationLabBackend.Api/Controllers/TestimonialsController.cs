@@ -43,7 +43,7 @@ namespace InnovationLabBackend.Api.Controllers
             return Ok(testimonialDto);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost(Name = "CreateTestimonial")]
         public async Task<ActionResult<TestimonialResponseDto>> CreateTestimonial([FromForm] CreateTestimonialDto testimonialCreateDto)
         {
@@ -84,6 +84,16 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             _mapper.Map(testimonialUpdateDto, testimonial);
+            if (testimonialUpdateDto.ImageUrl != null && testimonialUpdateDto.ImageUrl.Length > 0)
+            {     
+                //delete garne function banara handle garna xa
+                var imageUrl = await UploadImage(testimonialUpdateDto.ImageUrl);
+                if (imageUrl == null)
+                {
+                    return BadRequest("Image upload failed");
+                }
+                testimonial.ImageUrl = imageUrl;
+            }
             await _testimonialsRepo.UpdateTestimonialAsync(testimonial);
 
             return NoContent();
@@ -104,7 +114,7 @@ namespace InnovationLabBackend.Api.Controllers
             return NoContent();
         }
 
-        //[HttpPost("upload")]
+        [HttpPost("upload")]
         public async Task<string?> UploadImage(IFormFile file)
         {
             var cloudinary = new Cloudinary();

@@ -2,6 +2,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using DotNetEnv;
 using InnovationLabBackend.Api.DbContext;
+using InnovationLabBackend.Api.Helper;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using InnovationLabBackend.Api.Repository;
@@ -21,8 +22,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 Env.Load();
-Cloudinary cloudinary = new(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL");
+
+if (string.IsNullOrEmpty(cloudinaryUrl))
+{
+    throw new InvalidOperationException("CLOUDINARY_URL environment variable is not set.");
+}
+
+Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
 cloudinary.Api.Secure = true;
+builder.Services.AddSingleton(cloudinary);
 
 // Swagger Configuration
 builder.Services.AddSwaggerGen(options =>
@@ -101,6 +110,10 @@ builder.Services.AddAuthorization();
 
 // Add dependency injections for repositories
 builder.Services.AddScoped<ITestimonialsRepo, TestimonialsRepo>();
+builder.Services.AddScoped<IBannerRepo, BannerRepo>();
+builder.Services.AddScoped<IUploadMedia,UploadMedia >();
+
+
 
 var app = builder.Build();
 
