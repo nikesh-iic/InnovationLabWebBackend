@@ -1,27 +1,29 @@
 ﻿using AutoMapper;
 using InnovationLabBackend.Api.Dtos.Banner;
+using InnovationLabBackend.Api.Dtos.Banners;
 using InnovationLabBackend.Api.Helper;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using InnovationLabBackend.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace InnovationLabBackend.Api.Controllers
 {
     [ApiController]
-  
+
     [Route("api/v1/[controller]")]
     public class BannerController : ControllerBase
     {
         private readonly IBannerRepo bannerRepo;
         private readonly IUploadMedia uploadMediaHelper;
-        private readonly IMapper mapper; 
+        private readonly IMapper mapper;
 
         public BannerController(IBannerRepo bannerRepo, IUploadMedia uploadMediaHelper, IMapper mapper)
         {
             this.bannerRepo = bannerRepo;
             this.uploadMediaHelper = uploadMediaHelper;
-            this.mapper = mapper; 
+            this.mapper = mapper;
         }
 
         [HttpPost(Name = "CreateBanner")]
@@ -38,10 +40,30 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var newBanner = mapper.Map<Banner>(bannerDto);
-            newBanner.Url = uploadMedaTypeResponse.Url; 
+            newBanner.Url = uploadMedaTypeResponse.Url;
 
             var createdBanner = await bannerRepo.CreateBannerAsync(newBanner);
             return CreatedAtAction(nameof(CreateBanner), new { id = createdBanner.Id }, createdBanner);
+        }
+
+        [HttpGet(Name = "GetAllBanners")]
+        public async Task<ActionResult<IEnumerable<BannerGetDTO>>> GetAllBanners(
+            [FromQuery] Enums.BannerType? type = null,
+            [FromQuery] DateTimeOffset? startDate = null,
+            [FromQuery] DateTimeOffset? endDate = null,
+            [FromQuery] DateTimeOffset? createdAfter = null)
+        {
+            var result = await bannerRepo.GetAllBannerAsync(type, startDate, endDate, createdAfter);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<BannerGetDTO>> GetBannerById(Guid id)
+        {
+            var result = await bannerRepo.GetBannerByIdAsync(id);
+            if (result == null)
+                return NotFound(new { message = $"Banner with ID  not found." });
+            return Ok(result);
         }
     }
 }
