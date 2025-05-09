@@ -107,7 +107,7 @@ namespace InnovationLabBackend.Api.Controllers
             }
             await _testimonialsRepo.UpdateTestimonialAsync(testimonial);
 
-            return Ok(testimonial);
+            return NoContent();
         }
 
         [HttpDelete("{id}", Name = "DeleteTestimonial")]
