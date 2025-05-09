@@ -65,5 +65,13 @@ namespace InnovationLabBackend.Api.Controllers
                 return NotFound(new { message = $"Banner with ID  not found." });
             return Ok(result);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteBannerById(Guid id)
+        {
+            await bannerRepo.DeleteBannerAsync(id);
+            return NoContent();
+        }
     }
+
 }

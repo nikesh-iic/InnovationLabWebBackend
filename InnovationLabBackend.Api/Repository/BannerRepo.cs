@@ -5,6 +5,7 @@ using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Linq;
 
 namespace InnovationLabBackend.Api.Repository
 {
@@ -17,6 +18,18 @@ namespace InnovationLabBackend.Api.Repository
             await _dbContext.Banners.AddAsync(banner);
             await _dbContext.SaveChangesAsync();
             return banner;
+        }
+
+        public Task DeleteBannerAsync(Guid id)
+        {
+            var banner = _dbContext.Banners.FirstOrDefault(b => b.Id == id);
+            if (banner == null)
+            {
+                throw new NotFoundException($"Banner with ID {id} not found.");
+            }
+
+            _dbContext.Banners.Remove(banner);
+            return _dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<BannerGetDTO>> GetAllBannerAsync(
@@ -85,6 +98,8 @@ namespace InnovationLabBackend.Api.Repository
             return result;
 
         }
+
+
     }
 
     [Serializable]

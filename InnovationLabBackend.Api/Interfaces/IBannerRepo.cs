@@ -14,6 +14,7 @@ namespace InnovationLabBackend.Api.Interfaces
         DateTimeOffset? createdAfter= null);
 
         Task<BannerGetDTO> GetBannerByIdAsync(Guid id);
+        Task DeleteBannerAsync(Guid id);
        
     }
 }
