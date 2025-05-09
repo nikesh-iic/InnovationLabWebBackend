@@ -82,8 +82,19 @@ namespace InnovationLabBackend.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
+            if (testimonialUpdateDto.Name != null)
+                testimonial.Name = testimonialUpdateDto.Name;
 
-            _mapper.Map(testimonialUpdateDto, testimonial);
+            if (testimonialUpdateDto.Text != null)
+                testimonial.Text = testimonialUpdateDto.Text;
+
+            if (testimonialUpdateDto.Designation != null)
+                testimonial.Designation = testimonialUpdateDto.Designation;
+
+            if (testimonialUpdateDto.Organization != null)
+                testimonial.Organization = testimonialUpdateDto.Organization;
+
+            //_mapper.Map(testimonialUpdateDto, testimonial);
             if (testimonialUpdateDto.ImageUrl != null && testimonialUpdateDto.ImageUrl.Length > 0)
             {     
                 //delete garne function banara handle garna xa
@@ -96,7 +107,7 @@ namespace InnovationLabBackend.Api.Controllers
             }
             await _testimonialsRepo.UpdateTestimonialAsync(testimonial);
 
-            return NoContent();
+            return Ok(testimonial);
         }
 
         [HttpDelete("{id}", Name = "DeleteTestimonial")]
