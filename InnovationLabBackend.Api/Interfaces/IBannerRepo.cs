@@ -12,9 +12,11 @@ namespace InnovationLabBackend.Api.Interfaces
         DateTimeOffset? startDate = null,
         DateTimeOffset? endDate = null,
         DateTimeOffset? createdAfter= null);
-
         Task<BannerGetDTO> GetBannerByIdAsync(Guid id);
         Task DeleteBannerAsync(Guid id);
+        Task<Banner> updateBannerAsync(Guid id,BannerUpdateDTO bannerUpdateDTO);
+        Task ActivateBanner(Guid id);
+        Task<Banner> ScheduleBannerDate(Guid id,DateScheduleDTO dateScheduleDTO);
        
     }
 }

@@ -72,6 +72,48 @@ namespace InnovationLabBackend.Api.Controllers
             await bannerRepo.DeleteBannerAsync(id);
             return NoContent();
         }
-    }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> UpdateBanner([FromRoute] Guid id, [FromForm] BannerUpdateDTO banner)
+        {
+            if (banner == null)
+            {
+                return BadRequest();
+            }
+            var updatedBanner = await bannerRepo.updateBannerAsync(id, banner);
+            if (updatedBanner == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+        [HttpPut("{id}/activate")]
+        public async Task<IActionResult> ActivateBanner([FromRoute] Guid id)
+        {
+            try
+            {
+                await bannerRepo.ActivateBanner(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound($"Banner with id {id} not found." + ex);
+            }
+        }
+
+        [HttpPut("{id}/schedule")]
+        public async Task<ActionResult> ScheduleDateBanner([FromRoute]Guid id, [FromBody] DateScheduleDTO dateScheduleDTO)
+        {
+            try
+            {
+                await bannerRepo.ScheduleBannerDate(id, dateScheduleDTO);
+                return NoContent();
+            }
+            catch(Exception ex)
+            {
+                return NotFound($"Banner with id {id} not found." + ex);
+            }
+        }
+    }
 }

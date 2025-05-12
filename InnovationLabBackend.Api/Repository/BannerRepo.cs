@@ -6,12 +6,33 @@ using InnovationLabBackend.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq;
+using System.Reflection;
 
 namespace InnovationLabBackend.Api.Repository
 {
     public class BannerRepo(InnovationLabDbContext context) : IBannerRepo
     {
         private readonly InnovationLabDbContext _dbContext = context;
+
+        public async Task ActivateBanner(Guid id)
+        {
+           var currentBanner= await _dbContext.Banners.FindAsync(id);
+            if (currentBanner == null)
+                throw new NotFoundException("Banner with this id is not found");
+           var otherBanners = await _dbContext.Banners
+                .Where(b => b.Current && b.Id != id)
+                .ToListAsync();
+
+            foreach (var b in otherBanners)
+            {
+                b.Current = false;
+            }
+
+            currentBanner.Current = true;
+            currentBanner.ScheduledStart = DateTimeOffset.UtcNow;
+            await _dbContext.SaveChangesAsync();
+        }
+
 
         public async Task<Banner> CreateBannerAsync(Banner banner)
         {
@@ -99,7 +120,54 @@ namespace InnovationLabBackend.Api.Repository
 
         }
 
+        public async Task<Banner> ScheduleBannerDate(Guid id, DateScheduleDTO dateScheduleDTO)
+        {
+           var banner= await _dbContext.Banners.FindAsync(id);
+            if (banner == null)
+                throw new NotFoundException("Banner with this id not found");
+            if (dateScheduleDTO.ScheduledEnd.HasValue)
+                banner.ScheduledEnd = dateScheduleDTO.ScheduledEnd;
 
+            if (dateScheduleDTO.ScheduledStart.HasValue)
+                banner.ScheduledStart = dateScheduleDTO.ScheduledStart;
+
+            await _dbContext.SaveChangesAsync();
+            return banner;
+
+        }
+
+        public async Task<Banner> updateBannerAsync(Guid id, BannerUpdateDTO bannerUpdateDTO)
+        {
+            var banner = await _dbContext.Banners.FindAsync(id);
+            if (banner == null)
+            {
+                throw new NotFoundException("Banner with this id does not exist to update");
+            }
+
+            if (bannerUpdateDTO.Url != null)
+                banner.Url = bannerUpdateDTO.Url;
+
+            if (bannerUpdateDTO.Title != null)
+                banner.Title = bannerUpdateDTO.Title;
+
+            if (bannerUpdateDTO.SubTitle != null)
+                banner.SubTitle = bannerUpdateDTO.SubTitle;
+
+            if (bannerUpdateDTO.ScheduledEnd.HasValue)
+                banner.ScheduledEnd = bannerUpdateDTO.ScheduledEnd;
+
+            if (bannerUpdateDTO.ScheduledStart.HasValue)
+                banner.ScheduledStart = bannerUpdateDTO.ScheduledStart;
+
+            if (bannerUpdateDTO.Caption != null)
+                banner.Caption = bannerUpdateDTO.Caption;
+
+            if (bannerUpdateDTO.Type.HasValue)
+                banner.Type = bannerUpdateDTO.Type.Value;
+
+            await _dbContext.SaveChangesAsync();
+            return banner;
+        }
     }
 
     [Serializable]
