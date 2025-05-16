@@ -112,8 +112,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITestimonialsRepo, TestimonialsRepo>();
 builder.Services.AddScoped<IBannerRepo, BannerRepo>();
 builder.Services.AddScoped<IUploadMedia,UploadMedia >();
-
-
+builder.Services.AddScoped<ICategoriesRepo, CategoriesRepo>();
+builder.Services.AddScoped<IFaqsRepo, FaqsRepo>();
 
 var app = builder.Build();
 

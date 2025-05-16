@@ -8,5 +8,7 @@ namespace InnovationLabBackend.Api.DbContext
     {
         public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<Banner> Banners { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Faq> Faqs { get; set; }
     }
 }
