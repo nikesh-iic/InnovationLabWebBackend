@@ -36,17 +36,6 @@ A simple ASP.NET Core Web API backend for for the Innovation Lab project.
     {
         "ConnectionStrings": {
             "DbConnection": "Host=HOST_NAME:PORT;Database=DB_NAME;Username=DB_USERNAME;Password=DB_PASSWORD;"
-        },
-       "Jwt": {
-         "Issuer": "JWT_ISSUER",
-         "Audience": "JWT_AUDIENCE",
-         "Key": "YOUR_SECRET_JWT_KEY"
-       },
-       "Logging": {
-         "LogLevel": {
-           "Default": "Information",
-           "Microsoft.AspNetCore": "Warning"
-           }
         }
         *** other config if any ***
     }
@@ -61,7 +50,7 @@ A simple ASP.NET Core Web API backend for for the Innovation Lab project.
    Alternatively, use the `Debug and Run` option from the GUI in VS Code or Visual Studio
 
 4. **Access the API documentation**
-    - Open your browser and go to: https://localhost:7293/swagger (or the URL shown in the terminal)
+    - Open your browser and go to: https://localhost:5217/swagger (or the URL shown in the terminal)
 
 ## Usage
 
