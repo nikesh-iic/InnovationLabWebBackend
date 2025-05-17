@@ -5,6 +5,7 @@ using InnovationLabBackend.Api.Dtos.Events;
 using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnovationLabBackend.Api.Controllers
@@ -45,6 +46,7 @@ namespace InnovationLabBackend.Api.Controllers
             return Ok(eventDto);
         }
 
+        [Authorize]
         [Consumes("multipart/form-data")]
         [HttpPost(Name = "CreateEvent")]
         public async Task<ActionResult<EventResponseDto>> CreateEvent([FromForm] CreateEventDto eventCreateDto)
@@ -89,6 +91,7 @@ namespace InnovationLabBackend.Api.Controllers
             return CreatedAtAction(nameof(GetEvents), new { id = createdEvent.Id }, createdEventDto);
         }
 
+        [Authorize]
         [Consumes("multipart/form-data")]
         [HttpPut("{id}", Name = "UpdateEvent")]
         public async Task<ActionResult> UpdateEvent(Guid id, [FromForm] UpdateEventDto eventUpdateDto)
@@ -173,6 +176,7 @@ namespace InnovationLabBackend.Api.Controllers
             return CreatedAtAction(nameof(GetEventRegistrations), new { id = createdRegistration.EventId }, createdRegistration);
         }
 
+        [Authorize]
         [Consumes("application/json")]
         [HttpGet("{id}/registrations", Name = "GetEventRegistrations")]
         public async Task<ActionResult<List<EventRegistrationResponseDto>>> GetEventRegistrations(Guid id, [FromQuery] EventRegistrationFilterDto filters)
@@ -182,6 +186,7 @@ namespace InnovationLabBackend.Api.Controllers
             return Ok(registrationsDto);
         }
 
+        [Authorize]
         [Consumes("application/json")]
         [HttpPatch("{id}/registrations/{registrationId}/status", Name = "UpdateEventRegistrationStatus")]
         public async Task<ActionResult> UpdateEventRegistrationStatus(Guid id, Guid registrationId, [FromBody] UpdateEventRegistrationDto updateEventRegistrationDto)
