@@ -1,19 +1,28 @@
+using CloudinaryDotNet;
 using InnovationLabBackend.Api.DbContext;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
-using InnovationLabBackend.Api.Repository;
+using InnovationLabBackend.Api.Repositories;
+using InnovationLabBackend.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 
 // Swagger Configuration
@@ -89,8 +98,19 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// Cloudinary configuration
+builder.Services.AddSingleton<ICloudinary>(x =>
+{
+    var url = configuration["Cloudinary:Url"];
+    var cloudinary = new Cloudinary(url);
+    cloudinary.Api.Secure = true;
+    return cloudinary;
+});
+
 // Add dependency injections for repositories
 builder.Services.AddScoped<ITestimonialsRepo, TestimonialsRepo>();
+builder.Services.AddScoped<IEventsRepo, EventsRepo>();
+builder.Services.AddScoped<IMediaService, MediaService>();
 
 var app = builder.Build();
 

@@ -1,15 +1,13 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using AutoMapper;
+using InnovationLabBackend.Api.Models;
 
-namespace InnovationLabBackend.Api.Models
+namespace InnovationLabBackend.Api.Dtos.Events
 {
-    public class Event
+    [AutoMap(typeof(Event), ReverseMap = true)]
+    public class UpdateEventDto
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid? ParentEventId { get; set; }
-        [ForeignKey(nameof(ParentEventId))]
-        public Event? ParentEvent { get; set; }
         [Required]
         public required string Title { get; set; }
         [Required]
@@ -21,18 +19,16 @@ namespace InnovationLabBackend.Api.Models
         [Required]
         public required string Location { get; set; }
         [Required]
-        public required string CoverImageUrl { get; set; }
+        public required IFormFile CoverImage { get; set; }
         public string? SeriesName { get; set; }
         [Required]
         public required bool IsTeamEvent { get; set; }
-        [Required]
-        public required int MaxTeamMembers { get; set; }
+        public int? MaxTeamMembers { get; set; }
         public DateTimeOffset? RegistrationStart { get; set; }
         public DateTimeOffset? RegistrationEnd { get; set; }
         [Required]
-        public required DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
-        public DateTimeOffset UpdatedAt { get; set; }
-        public bool IsDeleted { get; set; } = false;
-        public DateTimeOffset DeletedAt { get; set; }
+        public required DateTimeOffset CreatedAt { get; set; }
+        [Required]
+        public required DateTimeOffset UpdatedAt { get; set; }
     }
 }

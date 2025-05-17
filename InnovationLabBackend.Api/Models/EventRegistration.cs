@@ -11,17 +11,17 @@ namespace InnovationLabBackend.Api.Models
         [Required]
         public required Guid EventId { get; set; }
         [ForeignKey(nameof(EventId))]
-        public required Event Event { get; set; }
+        public Event? Event { get; set; }
         [Required]
         public required EventRegistrationType Type { get; set; }
         [Required]
+        public required string Name { get; set; }
+        [Required]
         [EmailAddress]
         public required string Email { get; set; }
-        [Required]
         [Phone]
-        public required string Phone { get; set; }
-        [Required]
-        public required EventRegistrationStatus Status { get; set; }
+        public string? Phone { get; set; }
+        public EventRegistrationStatus Status { get; set; } = EventRegistrationStatus.Pending;
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset UpdatedAt { get; set; }
     }

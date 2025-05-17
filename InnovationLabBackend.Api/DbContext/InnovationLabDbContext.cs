@@ -8,6 +8,9 @@ namespace InnovationLabBackend.Api.DbContext
     public class InnovationLabDbContext(DbContextOptions<InnovationLabDbContext> options) : IdentityDbContext<User>(options)
     {
         public DbSet<Testimonial> Testimonials { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventRegistration> EventRegistrations { get; set; }
+        public DbSet<TeamMember> TeamMembers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
