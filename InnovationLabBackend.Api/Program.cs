@@ -114,6 +114,7 @@ builder.Services.AddScoped<IBannerRepo, BannerRepo>();
 builder.Services.AddScoped<IUploadMedia,UploadMedia >();
 builder.Services.AddScoped<ICategoriesRepo, CategoriesRepo>();
 builder.Services.AddScoped<IFaqsRepo, FaqsRepo>();
+builder.Services.AddScoped<IAboutRepo, AboutRepo>();
 
 var app = builder.Build();
 
