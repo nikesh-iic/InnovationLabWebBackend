@@ -8,6 +8,7 @@
 
 # app settings (dev) for config
 appsettings.Development.json
+appsettings.*.json
 
 # User-specific files
 *.rsuser
