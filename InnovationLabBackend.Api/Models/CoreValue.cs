@@ -1,19 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿﻿﻿using System.ComponentModel.DataAnnotations;
 
 namespace InnovationLabBackend.Api.Models
 {
-    public class Testimonial
+    public class CoreValue
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+        
         [Required]
-        public required string Name { get; set; }
+        public required string Title { get; set; }
+        
         [Required]
-        public required string Text { get; set; }
-        public string? Designation { get; set; }
-        public string? Organization { get; set; }
-        public string? ImageUrl { get; set; }
+        public required string Description { get; set; }
+        
+        public string? IconUrl { get; set; }
+        
+        public int Order { get; set; } = 0;
+        
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset UpdatedAt { get; set; }
         public bool IsDeleted { get; set; } = false;
