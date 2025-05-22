@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using InnovationLabBackend.Api.Models;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace InnovationLabBackend.Api.Dtos.Categories

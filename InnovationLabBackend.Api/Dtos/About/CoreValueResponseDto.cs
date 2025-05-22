@@ -1,4 +1,4 @@
-﻿﻿﻿using AutoMapper;
+﻿﻿using AutoMapper;
 using InnovationLabBackend.Api.Models;
 
 namespace InnovationLabBackend.Api.Dtos.About

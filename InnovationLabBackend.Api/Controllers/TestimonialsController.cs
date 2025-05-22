@@ -96,7 +96,7 @@ namespace InnovationLabBackend.Api.Controllers
 
             //_mapper.Map(testimonialUpdateDto, testimonial);
             if (testimonialUpdateDto.ImageUrl != null && testimonialUpdateDto.ImageUrl.Length > 0)
-            {     
+            {
                 //delete garne function banara handle garna xa
                 var imageUrl = await UploadImage(testimonialUpdateDto.ImageUrl);
                 if (imageUrl == null)
@@ -142,9 +142,9 @@ namespace InnovationLabBackend.Api.Controllers
                 return null;
             }
 
-            return  uploadResult.SecureUrl.AbsoluteUri; 
+            return uploadResult.SecureUrl.AbsoluteUri;
         }
-    
 
-}
+
+    }
 }

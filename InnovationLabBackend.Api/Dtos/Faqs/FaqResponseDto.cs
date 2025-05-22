@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using InnovationLabBackend.Api.Models;
-using System;
 
 namespace InnovationLabBackend.Api.Dtos.Faqs
 {

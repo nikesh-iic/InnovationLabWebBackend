@@ -1,5 +1,4 @@
-﻿using InnovationLabBackend.Api.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InnovationLabBackend.Api.Models

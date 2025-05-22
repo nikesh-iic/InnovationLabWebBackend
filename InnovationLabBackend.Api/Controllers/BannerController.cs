@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
-using InnovationLabBackend.Api.Dtos.Banner;
 using InnovationLabBackend.Api.Dtos.Banners;
-using InnovationLabBackend.Api.Helper;
+using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
-using InnovationLabBackend.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 
 namespace InnovationLabBackend.Api.Controllers
 {
@@ -16,34 +13,55 @@ namespace InnovationLabBackend.Api.Controllers
     public class BannerController : ControllerBase
     {
         private readonly IBannerRepo bannerRepo;
-        private readonly IUploadMedia uploadMediaHelper;
+        private readonly IMediaService mediaService;
         private readonly IMapper mapper;
 
-        public BannerController(IBannerRepo bannerRepo, IUploadMedia uploadMediaHelper, IMapper mapper)
+        public BannerController(IBannerRepo bannerRepo, IMediaService mediaService, IMapper mapper)
         {
             this.bannerRepo = bannerRepo;
-            this.uploadMediaHelper = uploadMediaHelper;
+            this.mediaService = mediaService;
             this.mapper = mapper;
         }
 
         [HttpPost(Name = "CreateBanner")]
         public async Task<ActionResult<BannerDTO>> CreateBanner([FromForm] CreateBannerDTO bannerDto)
         {
-            if (bannerDto == null)
+            if (bannerDto.Image == null)
             {
-                return BadRequest("Banner data is required.");
+                return BadRequest("Banner image is required.");
             }
-            var uploadMedaTypeResponse = await uploadMediaHelper.UploadMediaAsync(bannerDto.Url);
-            if (uploadMedaTypeResponse == null || uploadMedaTypeResponse.Url == null)
+
+            string mediaTypeString = bannerDto.Image.ContentType.ToLower();
+            MediaType mediaType = mediaTypeString.StartsWith("image") ? MediaType.Image
+                : mediaTypeString.StartsWith("video") ? MediaType.Video
+                : MediaType.NotSupported;
+
+            if (mediaType == MediaType.NotSupported)
             {
-                return BadRequest("Media upload failed.");
+                return StatusCode(
+                    StatusCodes.Status415UnsupportedMediaType,
+                    "Unsupported file format. Only image and video files are supported."
+                );
+            }
+
+            string? imageUrl = await mediaService.UploadAsync(
+                file: bannerDto.Image,
+                mediaType: mediaType,
+                folder: "banners"
+            );
+
+            if (imageUrl == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error while uploading the media.");
             }
 
             var newBanner = mapper.Map<Banner>(bannerDto);
-            newBanner.Url = uploadMedaTypeResponse.Url;
+            newBanner.Url = imageUrl;
 
             var createdBanner = await bannerRepo.CreateBannerAsync(newBanner);
-            return CreatedAtAction(nameof(CreateBanner), new { id = createdBanner.Id }, createdBanner);
+            var createdBannerDto = mapper.Map<BannerDTO>(createdBanner);
+
+            return CreatedAtAction(nameof(GetAllBanners), new { id = createdBanner.Id }, createdBannerDto);
         }
 
         [HttpGet(Name = "GetAllBanners")]
@@ -103,14 +121,14 @@ namespace InnovationLabBackend.Api.Controllers
         }
 
         [HttpPut("{id}/schedule")]
-        public async Task<ActionResult> ScheduleDateBanner([FromRoute]Guid id, [FromBody] DateScheduleDTO dateScheduleDTO)
+        public async Task<ActionResult> ScheduleDateBanner([FromRoute] Guid id, [FromBody] DateScheduleDTO dateScheduleDTO)
         {
             try
             {
                 await bannerRepo.ScheduleBannerDate(id, dateScheduleDTO);
                 return NoContent();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return NotFound($"Banner with id {id} not found." + ex);
             }

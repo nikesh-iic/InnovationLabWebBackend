@@ -1,12 +1,10 @@
 using CloudinaryDotNet;
 using InnovationLabBackend.Api.DbContext;
-using InnovationLabBackend.Api.Helper;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using InnovationLabBackend.Api.Repositories;
 using InnovationLabBackend.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -107,7 +105,7 @@ if (string.IsNullOrEmpty(cloudinaryUrl))
 }
 
 // Cloudinary configuration
-builder.Services.AddSingleton<ICloudinary>(x =>
+builder.Services.AddSingleton<ICloudinary, Cloudinary>(x =>
 {
     var cloudinary = new Cloudinary(cloudinaryUrl);
     cloudinary.Api.Secure = true;
@@ -115,11 +113,10 @@ builder.Services.AddSingleton<ICloudinary>(x =>
 });
 
 // Add dependency injections for repositories
+builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<ITestimonialsRepo, TestimonialsRepo>();
 builder.Services.AddScoped<IEventsRepo, EventsRepo>();
-builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IBannerRepo, BannerRepo>();
-builder.Services.AddScoped<IUploadMedia, UploadMedia>();
 builder.Services.AddScoped<ICategoriesRepo, CategoriesRepo>();
 builder.Services.AddScoped<IFaqsRepo, FaqsRepo>();
 builder.Services.AddScoped<IAboutRepo, AboutRepo>();

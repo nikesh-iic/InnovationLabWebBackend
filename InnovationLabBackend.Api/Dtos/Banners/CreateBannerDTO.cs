@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using System.ComponentModel.DataAnnotations;
 
-namespace InnovationLabBackend.Api.Dtos.Banner
+namespace InnovationLabBackend.Api.Dtos.Banners
 {
     [AutoMap(typeof(Models.Banner), ReverseMap = true)]
     public class CreateBannerDTO
     {
         [Required]
-        public required IFormFile Url { get; set; }
+        public required IFormFile Image { get; set; }
         [Required]
         public Enums.BannerType Type { get; set; }
         [Required]

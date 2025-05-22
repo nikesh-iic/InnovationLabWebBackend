@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using AutoMapper;
 using InnovationLabBackend.Api.Enums;
 
 namespace InnovationLabBackend.Api.Dtos.Events

@@ -1,6 +1,4 @@
-using System.Linq.Expressions;
 using AutoMapper;
-using CloudinaryDotNet;
 using InnovationLabBackend.Api.Dtos.Events;
 using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Interfaces;
@@ -55,8 +53,6 @@ namespace InnovationLabBackend.Api.Controllers
             {
                 return BadRequest("Cover image is required.");
             }
-
-            Console.WriteLine(eventCreateDto.CoverImage.ContentType.ToLower());
 
             string mediaTypeString = eventCreateDto.CoverImage.ContentType.ToLower();
             MediaType mediaType = mediaTypeString.StartsWith("image") ? MediaType.Image

@@ -1,4 +1,4 @@
-﻿﻿﻿using InnovationLabBackend.Api.Models;
+﻿﻿using InnovationLabBackend.Api.Models;
 
 namespace InnovationLabBackend.Api.Interfaces
 {
@@ -7,14 +7,14 @@ namespace InnovationLabBackend.Api.Interfaces
         // About
         Task<Models.About?> GetAboutAsync();
         Task<Models.About> CreateOrUpdateAboutAsync(Models.About about);
-        
+
         // Core Values
         Task<List<CoreValue>> GetCoreValuesAsync();
         Task<CoreValue?> GetCoreValueByIdAsync(Guid id);
         Task<CoreValue> CreateCoreValueAsync(CoreValue coreValue);
         Task UpdateCoreValueAsync(CoreValue coreValue);
         Task DeleteCoreValueAsync(CoreValue coreValue);
-        
+
         // Journey
         Task<List<JourneyItem>> GetJourneyItemsAsync();
         Task<JourneyItem?> GetJourneyItemByIdAsync(Guid id);
