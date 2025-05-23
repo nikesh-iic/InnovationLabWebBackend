@@ -1,5 +1,6 @@
 ﻿using InnovationLabBackend.Api.Enums;
 using System.ComponentModel.DataAnnotations;
+
 namespace InnovationLabBackend.Api.Models
 {
     public class Banner
@@ -16,7 +17,7 @@ namespace InnovationLabBackend.Api.Models
         public required string Caption { get; set; }
         public bool Current { get; set; }
         public int Version { get; set; }
-        public string? ParentId { get; set; }= null;
+        public string? ParentId { get; set; } = null;
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset? ScheduledStart { get; set; } = null;
         public DateTimeOffset? ScheduledEnd { get; set; } = null;

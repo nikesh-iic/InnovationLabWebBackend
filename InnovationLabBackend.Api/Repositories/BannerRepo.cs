@@ -1,14 +1,10 @@
 ﻿using InnovationLabBackend.Api.DbContext;
-using InnovationLabBackend.Api.Dtos.Banner;
 using InnovationLabBackend.Api.Dtos.Banners;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using System.Linq;
-using System.Reflection;
 
-namespace InnovationLabBackend.Api.Repository
+namespace InnovationLabBackend.Api.Repositories
 {
     public class BannerRepo(InnovationLabDbContext context) : IBannerRepo
     {
@@ -16,12 +12,12 @@ namespace InnovationLabBackend.Api.Repository
 
         public async Task ActivateBanner(Guid id)
         {
-           var currentBanner= await _dbContext.Banners.FindAsync(id);
+            var currentBanner = await _dbContext.Banners.FindAsync(id);
             if (currentBanner == null)
                 throw new NotFoundException("Banner with this id is not found");
-           var otherBanners = await _dbContext.Banners
-                .Where(b => b.Current && b.Id != id)
-                .ToListAsync();
+            var otherBanners = await _dbContext.Banners
+                 .Where(b => b.Current && b.Id != id)
+                 .ToListAsync();
 
             foreach (var b in otherBanners)
             {
@@ -61,7 +57,7 @@ namespace InnovationLabBackend.Api.Repository
             )
 
         {
-            var query =  _dbContext.Banners.AsNoTracking().AsQueryable();
+            var query = _dbContext.Banners.AsNoTracking().AsQueryable();
 
             if (type.HasValue)
                 query = query.Where(b => b.Type == type.Value);
@@ -96,9 +92,9 @@ namespace InnovationLabBackend.Api.Repository
 
         public async Task<BannerGetDTO> GetBannerByIdAsync(Guid id)
         {
-            var result= await _dbContext.Banners.AsNoTracking()
+            var result = await _dbContext.Banners.AsNoTracking()
                 .Where(u => u.Id == id)
-                .Select(b=> new BannerGetDTO
+                .Select(b => new BannerGetDTO
                 {
                     Id = b.Id,
                     Url = b.Url,
@@ -122,7 +118,7 @@ namespace InnovationLabBackend.Api.Repository
 
         public async Task<Banner> ScheduleBannerDate(Guid id, DateScheduleDTO dateScheduleDTO)
         {
-           var banner= await _dbContext.Banners.FindAsync(id);
+            var banner = await _dbContext.Banners.FindAsync(id);
             if (banner == null)
                 throw new NotFoundException("Banner with this id not found");
             if (dateScheduleDTO.ScheduledEnd.HasValue)

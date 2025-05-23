@@ -90,12 +90,12 @@ namespace InnovationLabBackend.Api.Controllers
 
                 var secret = await _userManager.GetAuthenticatorKeyAsync(user);
                 const string issuer = "InnovationLab";
-                var qrCodeUri = $"otpauth://totp/{issuer}:{user.Email}?secret={secret}&issuer={issuer}&digits=6";
+                var qrCodeUrl = $"otpauth://totp/{issuer}:{user.Email}?secret={secret}&issuer={issuer}&digits=6";
 
                 var response = new UserRegisterResponseDto
                 {
                     Message = "User registered successfully",
-                    QrCodeUri = qrCodeUri
+                    QrCodeUrl = qrCodeUrl
                 };
 
                 return Ok(response);

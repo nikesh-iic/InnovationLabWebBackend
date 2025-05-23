@@ -1,30 +1,30 @@
-﻿﻿﻿using InnovationLabBackend.Api.DbContext;
+﻿﻿using InnovationLabBackend.Api.DbContext;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace InnovationLabBackend.Api.Repository
+namespace InnovationLabBackend.Api.Repositories
 {
     public class AboutRepo(InnovationLabDbContext dbContext) : IAboutRepo
     {
         private readonly InnovationLabDbContext _dbContext = dbContext;
-        
+
         private async Task<bool> SaveChangesAsync()
         {
             return await _dbContext.SaveChangesAsync() != 0;
         }
 
         // About
-        public async Task<Models.About?> GetAboutAsync()
+        public async Task<About?> GetAboutAsync()
         {
             var about = await _dbContext.About.FirstOrDefaultAsync();
             return about;
         }
 
-        public async Task<Models.About> CreateOrUpdateAboutAsync(Models.About about)
+        public async Task<About> CreateOrUpdateAboutAsync(About about)
         {
             var existingAbout = await _dbContext.About.FirstOrDefaultAsync();
-            
+
             if (existingAbout == null)
             {
                 await _dbContext.About.AddAsync(about);
@@ -38,10 +38,10 @@ namespace InnovationLabBackend.Api.Repository
                 existingAbout.ParentOrgLogoUrl = about.ParentOrgLogoUrl;
                 existingAbout.ParentOrgWebsiteUrl = about.ParentOrgWebsiteUrl;
                 existingAbout.UpdatedAt = DateTimeOffset.UtcNow;
-                
+
                 about = existingAbout;
             }
-            
+
             await SaveChangesAsync();
             return about;
         }
@@ -53,7 +53,7 @@ namespace InnovationLabBackend.Api.Repository
                 .Where(cv => !cv.IsDeleted)
                 .OrderBy(cv => cv.Order)
                 .ToListAsync();
-            
+
             return coreValues;
         }
 
@@ -61,7 +61,7 @@ namespace InnovationLabBackend.Api.Repository
         {
             var coreValue = await _dbContext.CoreValues
                 .FirstOrDefaultAsync(cv => cv.Id == id && !cv.IsDeleted);
-            
+
             return coreValue;
         }
 
@@ -93,7 +93,7 @@ namespace InnovationLabBackend.Api.Repository
                 .OrderByDescending(ji => ji.Date)
                 .ThenBy(ji => ji.Order)
                 .ToListAsync();
-            
+
             return journeyItems;
         }
 
@@ -101,7 +101,7 @@ namespace InnovationLabBackend.Api.Repository
         {
             var journeyItem = await _dbContext.JourneyItems
                 .FirstOrDefaultAsync(ji => ji.Id == id && !ji.IsDeleted);
-            
+
             return journeyItem;
         }
 

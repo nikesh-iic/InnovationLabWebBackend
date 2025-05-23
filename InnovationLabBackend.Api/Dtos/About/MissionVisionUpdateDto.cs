@@ -1,4 +1,4 @@
-﻿﻿﻿using AutoMapper;
+﻿﻿using AutoMapper;
 using System.ComponentModel.DataAnnotations;
 
 namespace InnovationLabBackend.Api.Dtos.About
@@ -8,7 +8,7 @@ namespace InnovationLabBackend.Api.Dtos.About
     {
         [Required]
         public required string Mission { get; set; }
-        
+
         [Required]
         public required string Vision { get; set; }
     }

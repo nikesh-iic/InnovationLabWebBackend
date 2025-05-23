@@ -1,6 +1,5 @@
-﻿﻿﻿using AutoMapper;
+﻿﻿using AutoMapper;
 using InnovationLabBackend.Api.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace InnovationLabBackend.Api.Dtos.About
 {
@@ -8,11 +7,11 @@ namespace InnovationLabBackend.Api.Dtos.About
     public class CoreValueUpdateDto
     {
         public string? Title { get; set; }
-        
+
         public string? Description { get; set; }
-        
+
         public IFormFile? Icon { get; set; }
-        
+
         public int? Order { get; set; }
     }
 }

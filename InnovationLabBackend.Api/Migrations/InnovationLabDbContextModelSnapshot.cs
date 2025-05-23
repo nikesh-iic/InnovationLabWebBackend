@@ -96,8 +96,9 @@ namespace InnovationLabBackend.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -174,6 +175,112 @@ namespace InnovationLabBackend.Api.Migrations
                     b.ToTable("CoreValues");
                 });
 
+            modelBuilder.Entity("InnovationLabBackend.Api.Models.Event", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CoverImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("EndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsTeamEvent")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MaxTeamMembers")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentEventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("RegistrationEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("RegistrationStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SeriesName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("StartTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentEventId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("InnovationLabBackend.Api.Models.EventRegistration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventRegistrations");
+                });
+
             modelBuilder.Entity("InnovationLabBackend.Api.Models.Faq", b =>
                 {
                     b.Property<Guid>("Id")
@@ -242,6 +349,37 @@ namespace InnovationLabBackend.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("JourneyItems");
+                });
+
+            modelBuilder.Entity("InnovationLabBackend.Api.Models.TeamMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RegistrationId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistrationId");
+
+                    b.ToTable("TeamMembers");
                 });
 
             modelBuilder.Entity("InnovationLabBackend.Api.Models.Testimonial", b =>
@@ -510,6 +648,26 @@ namespace InnovationLabBackend.Api.Migrations
                     b.Navigation("ParentCategory");
                 });
 
+            modelBuilder.Entity("InnovationLabBackend.Api.Models.Event", b =>
+                {
+                    b.HasOne("InnovationLabBackend.Api.Models.Event", "ParentEvent")
+                        .WithMany()
+                        .HasForeignKey("ParentEventId");
+
+                    b.Navigation("ParentEvent");
+                });
+
+            modelBuilder.Entity("InnovationLabBackend.Api.Models.EventRegistration", b =>
+                {
+                    b.HasOne("InnovationLabBackend.Api.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("InnovationLabBackend.Api.Models.Faq", b =>
                 {
                     b.HasOne("InnovationLabBackend.Api.Models.Category", "Category")
@@ -519,6 +677,17 @@ namespace InnovationLabBackend.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("InnovationLabBackend.Api.Models.TeamMember", b =>
+                {
+                    b.HasOne("InnovationLabBackend.Api.Models.EventRegistration", "Registration")
+                        .WithMany()
+                        .HasForeignKey("RegistrationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Registration");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

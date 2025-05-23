@@ -3,7 +3,7 @@ using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace InnovationLabBackend.Api.Repository
+namespace InnovationLabBackend.Api.Repositories
 {
     public class FaqsRepo : IFaqsRepo
     {

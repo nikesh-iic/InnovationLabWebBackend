@@ -24,15 +24,11 @@ out/
 *.log
 *.vspscc
 
-# Entity Framework
-Migrations/
-
 # Configuration files
 .env
 *.secret.json
 appsettings.Development.json
 appsettings.Local.json
-
 
 # Logs
 *.log

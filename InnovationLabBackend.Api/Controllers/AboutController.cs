@@ -1,4 +1,4 @@
-﻿﻿﻿using AutoMapper;
+﻿﻿using AutoMapper;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using InnovationLabBackend.Api.Dtos.About;
@@ -15,9 +15,9 @@ namespace InnovationLabBackend.Api.Controllers
     {
         private readonly IAboutRepo _aboutRepo;
         private readonly IMapper _mapper;
-        private readonly Cloudinary _cloudinary;
+        private readonly ICloudinary _cloudinary;
 
-        public AboutController(IAboutRepo aboutRepo, IMapper mapper, Cloudinary cloudinary)
+        public AboutController(IAboutRepo aboutRepo, IMapper mapper, ICloudinary cloudinary)
         {
             _aboutRepo = aboutRepo;
             _mapper = mapper;
@@ -30,13 +30,13 @@ namespace InnovationLabBackend.Api.Controllers
         public async Task<ActionResult<AboutResponseDto>> GetAbout()
         {
             var about = await _aboutRepo.GetAboutAsync();
-            
+
             if (about == null)
             {
                 about = new Models.About();
                 await _aboutRepo.CreateOrUpdateAboutAsync(about);
             }
-            
+
             var aboutDto = _mapper.Map<AboutResponseDto>(about);
             return Ok(aboutDto);
         }
@@ -45,13 +45,13 @@ namespace InnovationLabBackend.Api.Controllers
         public async Task<ActionResult<AboutResponseDto>> GetMissionVision()
         {
             var about = await _aboutRepo.GetAboutAsync();
-            
+
             if (about == null)
             {
                 about = new Models.About();
                 await _aboutRepo.CreateOrUpdateAboutAsync(about);
             }
-            
+
             var aboutDto = _mapper.Map<AboutResponseDto>(about);
             return Ok(new { Mission = aboutDto.Mission, Vision = aboutDto.Vision });
         }
@@ -68,16 +68,17 @@ namespace InnovationLabBackend.Api.Controllers
         public async Task<ActionResult<AboutResponseDto>> GetParentOrg()
         {
             var about = await _aboutRepo.GetAboutAsync();
-            
+
             if (about == null)
             {
                 about = new Models.About();
                 await _aboutRepo.CreateOrUpdateAboutAsync(about);
             }
-            
+
             var aboutDto = _mapper.Map<AboutResponseDto>(about);
-            return Ok(new { 
-                ParentOrgName = aboutDto.ParentOrgName, 
+            return Ok(new
+            {
+                ParentOrgName = aboutDto.ParentOrgName,
                 ParentOrgDescription = aboutDto.ParentOrgDescription,
                 ParentOrgLogoUrl = aboutDto.ParentOrgLogoUrl,
                 ParentOrgWebsiteUrl = aboutDto.ParentOrgWebsiteUrl
@@ -106,13 +107,13 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var about = await _aboutRepo.GetAboutAsync() ?? new Models.About();
-            
+
             about.Mission = missionVisionDto.Mission;
             about.Vision = missionVisionDto.Vision;
             about.UpdatedAt = DateTimeOffset.UtcNow;
-            
+
             await _aboutRepo.CreateOrUpdateAboutAsync(about);
-            
+
             return NoContent();
         }
 
@@ -126,7 +127,7 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var coreValue = _mapper.Map<CoreValue>(coreValueDto);
-            
+
             if (coreValueDto.Icon != null && coreValueDto.Icon.Length > 0)
             {
                 var iconUrl = await UploadImage(coreValueDto.Icon, "core-values");
@@ -136,10 +137,10 @@ namespace InnovationLabBackend.Api.Controllers
                 }
                 coreValue.IconUrl = iconUrl;
             }
-            
+
             var createdCoreValue = await _aboutRepo.CreateCoreValueAsync(coreValue);
             var responseDto = _mapper.Map<CoreValueResponseDto>(createdCoreValue);
-            
+
             return CreatedAtAction(nameof(GetCoreValues), new { id = responseDto.Id }, responseDto);
         }
 
@@ -153,21 +154,21 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var coreValue = await _aboutRepo.GetCoreValueByIdAsync(id);
-            
+
             if (coreValue == null)
             {
                 return NotFound(new { Message = "Core value not found" });
             }
-            
+
             if (coreValueDto.Title != null)
                 coreValue.Title = coreValueDto.Title;
-                
+
             if (coreValueDto.Description != null)
                 coreValue.Description = coreValueDto.Description;
-                
+
             if (coreValueDto.Order.HasValue)
                 coreValue.Order = coreValueDto.Order.Value;
-                
+
             if (coreValueDto.Icon != null && coreValueDto.Icon.Length > 0)
             {
                 var iconUrl = await UploadImage(coreValueDto.Icon, "core-values");
@@ -177,10 +178,10 @@ namespace InnovationLabBackend.Api.Controllers
                 }
                 coreValue.IconUrl = iconUrl;
             }
-            
+
             coreValue.UpdatedAt = DateTimeOffset.UtcNow;
             await _aboutRepo.UpdateCoreValueAsync(coreValue);
-            
+
             return NoContent();
         }
 
@@ -189,14 +190,14 @@ namespace InnovationLabBackend.Api.Controllers
         public async Task<ActionResult> DeleteCoreValue(Guid id)
         {
             var coreValue = await _aboutRepo.GetCoreValueByIdAsync(id);
-            
+
             if (coreValue == null)
             {
                 return NotFound(new { Message = "Core value not found" });
             }
-            
+
             await _aboutRepo.DeleteCoreValueAsync(coreValue);
-            
+
             return NoContent();
         }
 
@@ -210,11 +211,11 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var about = await _aboutRepo.GetAboutAsync() ?? new Models.About();
-            
+
             about.ParentOrgName = parentOrgDto.ParentOrgName;
             about.ParentOrgDescription = parentOrgDto.ParentOrgDescription;
             about.ParentOrgWebsiteUrl = parentOrgDto.ParentOrgWebsiteUrl;
-            
+
             if (parentOrgDto.ParentOrgLogo != null && parentOrgDto.ParentOrgLogo.Length > 0)
             {
                 var logoUrl = await UploadImage(parentOrgDto.ParentOrgLogo, "parent-org");
@@ -224,10 +225,10 @@ namespace InnovationLabBackend.Api.Controllers
                 }
                 about.ParentOrgLogoUrl = logoUrl;
             }
-            
+
             about.UpdatedAt = DateTimeOffset.UtcNow;
             await _aboutRepo.CreateOrUpdateAboutAsync(about);
-            
+
             return NoContent();
         }
 
@@ -241,7 +242,7 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var journeyItem = _mapper.Map<JourneyItem>(journeyItemDto);
-            
+
             if (journeyItemDto.Image != null && journeyItemDto.Image.Length > 0)
             {
                 var imageUrl = await UploadImage(journeyItemDto.Image, "journey");
@@ -251,10 +252,10 @@ namespace InnovationLabBackend.Api.Controllers
                 }
                 journeyItem.ImageUrl = imageUrl;
             }
-            
+
             var createdJourneyItem = await _aboutRepo.CreateJourneyItemAsync(journeyItem);
             var responseDto = _mapper.Map<JourneyItemResponseDto>(createdJourneyItem);
-            
+
             return CreatedAtAction(nameof(GetJourney), new { id = responseDto.Id }, responseDto);
         }
 
@@ -268,24 +269,24 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var journeyItem = await _aboutRepo.GetJourneyItemByIdAsync(id);
-            
+
             if (journeyItem == null)
             {
                 return NotFound(new { Message = "Journey item not found" });
             }
-            
+
             if (journeyItemDto.Title != null)
                 journeyItem.Title = journeyItemDto.Title;
-                
+
             if (journeyItemDto.Description != null)
                 journeyItem.Description = journeyItemDto.Description;
-                
+
             if (journeyItemDto.Date.HasValue)
                 journeyItem.Date = journeyItemDto.Date.Value;
-                
+
             if (journeyItemDto.Order.HasValue)
                 journeyItem.Order = journeyItemDto.Order.Value;
-                
+
             if (journeyItemDto.Image != null && journeyItemDto.Image.Length > 0)
             {
                 var imageUrl = await UploadImage(journeyItemDto.Image, "journey");
@@ -295,10 +296,10 @@ namespace InnovationLabBackend.Api.Controllers
                 }
                 journeyItem.ImageUrl = imageUrl;
             }
-            
+
             journeyItem.UpdatedAt = DateTimeOffset.UtcNow;
             await _aboutRepo.UpdateJourneyItemAsync(journeyItem);
-            
+
             return NoContent();
         }
 
@@ -307,14 +308,14 @@ namespace InnovationLabBackend.Api.Controllers
         public async Task<ActionResult> DeleteJourneyItem(Guid id)
         {
             var journeyItem = await _aboutRepo.GetJourneyItemByIdAsync(id);
-            
+
             if (journeyItem == null)
             {
                 return NotFound(new { Message = "Journey item not found" });
             }
-            
+
             await _aboutRepo.DeleteJourneyItemAsync(journeyItem);
-            
+
             return NoContent();
         }
 

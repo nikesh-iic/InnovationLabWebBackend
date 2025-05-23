@@ -1,4 +1,4 @@
-﻿namespace InnovationLabBackend.Api.Dtos.Banner
+﻿namespace InnovationLabBackend.Api.Dtos.Banners
 {
     public class BannerTypeDTO
     {

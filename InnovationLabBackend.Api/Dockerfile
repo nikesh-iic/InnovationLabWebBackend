@@ -15,4 +15,5 @@ RUN dotnet publish "InnovationLabBackend.Api/InnovationLabBackend.Api.csproj" -c
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+COPY InnovationLabBackend.Api/appsettings.Development.json ./
 ENTRYPOINT ["dotnet", "InnovationLabBackend.Api.dll"]

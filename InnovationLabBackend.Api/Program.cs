@@ -1,37 +1,29 @@
 using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using DotNetEnv;
 using InnovationLabBackend.Api.DbContext;
-using InnovationLabBackend.Api.Helper;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
-using InnovationLabBackend.Api.Repository;
+using InnovationLabBackend.Api.Repositories;
+using InnovationLabBackend.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddEndpointsApiExplorer();
-
-Env.Load();
-var cloudinaryUrl = Environment.GetEnvironmentVariable("CLOUDINARY_URL");
-
-if (string.IsNullOrEmpty(cloudinaryUrl))
-{
-    throw new InvalidOperationException("CLOUDINARY_URL environment variable is not set.");
-}
-
-Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
-cloudinary.Api.Secure = true;
-builder.Services.AddSingleton(cloudinary);
 
 // Swagger Configuration
 builder.Services.AddSwaggerGen(options =>
@@ -68,8 +60,6 @@ builder.Services.AddSwaggerGen(options =>
 // Add database connection using connection string
 builder.Services.AddDbContext<InnovationLabDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DbConnection")));
-
-
 
 // Initialize AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -108,10 +98,25 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+var cloudinaryUrl = configuration["Cloudinary:Url"];
+if (string.IsNullOrEmpty(cloudinaryUrl))
+{
+    throw new InvalidOperationException("The cloudinary url is not configured.");
+}
+
+// Cloudinary configuration
+builder.Services.AddSingleton<ICloudinary, Cloudinary>(x =>
+{
+    var cloudinary = new Cloudinary(cloudinaryUrl);
+    cloudinary.Api.Secure = true;
+    return cloudinary;
+});
+
 // Add dependency injections for repositories
+builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<ITestimonialsRepo, TestimonialsRepo>();
+builder.Services.AddScoped<IEventsRepo, EventsRepo>();
 builder.Services.AddScoped<IBannerRepo, BannerRepo>();
-builder.Services.AddScoped<IUploadMedia,UploadMedia >();
 builder.Services.AddScoped<ICategoriesRepo, CategoriesRepo>();
 builder.Services.AddScoped<IFaqsRepo, FaqsRepo>();
 builder.Services.AddScoped<IAboutRepo, AboutRepo>();

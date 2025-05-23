@@ -3,12 +3,12 @@ using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace InnovationLabBackend.Api.Repository
+namespace InnovationLabBackend.Api.Repositories
 {
     public class TestimonialsRepo(InnovationLabDbContext dbContext) : ITestimonialsRepo
     {
         private readonly InnovationLabDbContext _dbContext = dbContext;
-        
+
         private async Task<bool> SaveChangesAsync()
         {
             return await _dbContext.SaveChangesAsync() != 0;
