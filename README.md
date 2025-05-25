@@ -36,25 +36,43 @@ A simple ASP.NET Core Web API backend for for the Innovation Lab project.
 
    ```appsettings.Development.json
     {
-        "ConnectionStrings": {
-            "DbConnection": "Host=<HOST_NAME>:<PORT>;Database=<DB_NAME>;Username=<POSTGRES_USER>;Password=<POSTGRES_PASSWORD>;"
-         },
-         "Jwt": {
-          "Issuer": "<JWT_ISSUER>",
-          "Audience": "<JWT_AUDIENCE>",
-          "Key": "<256_BIT_JWT_KEY>"
-         },
-         "Cloudinary": {
-          "Url": "cloudinary://<API_KEY>:<API_SECRET>@<CLOUD_NAME>"
+      "ConnectionStrings": {
+         "DbConnection": "Host=<HOST_NAME>:<PORT>;Database=<DB_NAME>;Username=<POSTGRES_USER>;Password=<POSTGRES_PASSWORD>;"
+      },
+      "Jwt": {
+         "Issuer": "<JWT_ISSUER>",
+         "Audience": "<JWT_AUDIENCE>",
+         "Key": "<256_BIT_JWT_KEY>"
+      },
+      "Cloudinary": {
+         "Url": "cloudinary://<API_KEY>:<API_SECRET>@<CLOUD_NAME>"
+      },
+      "Logging": {
+         "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
          }
-        *** other config if any ***
+      }
     }
+   ```
+
+   **FOR DOCKER ONLY**
+
+   - Create `.env` file in the root of the directory to store the db credentials for docker
+   - Add the database username, password, and database name for the postgres db in docker
+   - The `.env` file should look like this after all the configuration
+
+   ```.env
+   POSTGRES_USER=<POSTGRES_USER>
+   POSTGRES_PASSWORD=<POSTGRES_PASSWORD>
+   POSTGRES_DB=<DB_NAME>
    ```
 
    **Note**:
 
    - Replace `HOST_NAME`, `PORT`, `DB_NAME`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` with your host, port, database name, postgres username, and postgress password to configure the PostgreSQL database.
-     The defaults to match the docker-compose.yml setup are `localhost`, `5432`, `InnovationLabDb`, `postgres`, and `password`
+     - The defaults are `localhost`, `5432`, `InnovationLabDb`, `postgres`, and `password`
+     - _FOR DOCKER_ the default host is `db` instead of `localhost`
    - Replace `JWT_ISSUER`, `JWT_AUDIENCE`, and `256_BIT_JWT_KEY` with your JWT issuer, JWT audience, and your 256 bit JWT secret key
    - Replace `API_KEY`, `API_SECRET`, and `CLOUD_NAME` with your cloudinary api key, api secret, and the cloud name provided from the Cloudinary dashboard
 
@@ -65,7 +83,7 @@ A simple ASP.NET Core Web API backend for for the Innovation Lab project.
    - Start the API and PostgreSQL database using Docker Compose:
 
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
    - This builds docker image from `InnovationLabBackend.Api` and starts the services defined in `docker-compose.yml`.
@@ -83,7 +101,7 @@ A simple ASP.NET Core Web API backend for for the Innovation Lab project.
 
    **Using Docker Compose**
 
-   - Open your browser and go to: http://localhost:8080/swagger (or the URL shown in the terminal)
+   - Open your browser and go to: http://localhost:8080/swagger (or the URL shown in docker)
 
    **Without Using Docker Compose**
 
@@ -92,7 +110,7 @@ A simple ASP.NET Core Web API backend for for the Innovation Lab project.
 5. **Stop the Application**
    - Press `Ctrl+C` to stop the docker containers, or run:
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 ## Usage
