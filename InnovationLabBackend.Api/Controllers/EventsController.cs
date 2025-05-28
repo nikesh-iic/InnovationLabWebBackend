@@ -110,6 +110,38 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             _mapper.Map(eventUpdateDto, ev);
+
+            // Handle CoverImage update
+            if (eventUpdateDto.CoverImage != null)
+            {
+                string mediaTypeString = eventUpdateDto.CoverImage.ContentType.ToLower();
+                MediaType mediaType = mediaTypeString.StartsWith("image") ? MediaType.Image
+                    : mediaTypeString.StartsWith("video") ? MediaType.Video
+                    : MediaType.NotSupported;
+
+                if (mediaType == MediaType.NotSupported)
+                {
+                    return StatusCode(
+                        StatusCodes.Status415UnsupportedMediaType,
+                        "Unsupported file format. Only image and video files are supported."
+                    );
+                }
+
+                string? imageUrl = await _mediaService.UploadAsync(
+                    file: eventUpdateDto.CoverImage,
+                    mediaType: mediaType,
+                    folder: "events"
+                );
+
+                if (imageUrl == null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Error while uploading the media.");
+                }
+
+                ev.CoverImageUrl = imageUrl;
+            }
+            // else: do not change CoverImageUrl
+
             await _eventsRepo.UpdateEventAsync(ev);
 
             return NoContent();
