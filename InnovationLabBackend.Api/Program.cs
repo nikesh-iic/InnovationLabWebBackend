@@ -68,10 +68,21 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
-    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedEmail = true;
+    options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<InnovationLabDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowInnovationLabFrontend", policy =>
+    {
+        policy.WithOrigins("https://innovation.iic.edu.np")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -137,6 +148,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowInnovationLabFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
