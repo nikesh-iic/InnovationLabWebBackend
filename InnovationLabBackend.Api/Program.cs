@@ -68,7 +68,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
-    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedEmail = true;
+    options.User.RequireUniqueEmail = true;
 })
 .AddEntityFrameworkStores<InnovationLabDbContext>()
 .AddDefaultTokenProviders();

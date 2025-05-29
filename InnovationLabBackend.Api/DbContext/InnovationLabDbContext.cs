@@ -22,6 +22,8 @@ namespace InnovationLabBackend.Api.DbContext
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+
             // Automatically convert all enums to strings
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {

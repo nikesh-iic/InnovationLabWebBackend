@@ -7,7 +7,7 @@ namespace InnovationLabBackend.Api.Dtos.Events
     public class EventResponseDto
     {
         public Guid Id { get; set; }
-        public Guid? ParentEvent { get; set; }
+        public Guid? ParentEventId { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
         public required DateTimeOffset StartTime { get; set; }
