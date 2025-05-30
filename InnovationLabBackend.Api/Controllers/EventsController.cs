@@ -1,4 +1,6 @@
+using System.Net;
 using AutoMapper;
+using InnovationLabBackend.Api.Dtos;
 using InnovationLabBackend.Api.Dtos.Events;
 using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Interfaces;
@@ -28,20 +30,27 @@ namespace InnovationLabBackend.Api.Controllers
 
         [Consumes("application/json")]
         [HttpGet("{id}", Name = "GetEventById")]
-        public async Task<ActionResult<EventResponseDto>> GetEventById(Guid id)
+        public async Task<ActionResult<GenericResponse<EventResponseDto>>> GetEventById(Guid id)
         {
             var ev = await _eventsRepo.GetEventByIdAsync(id);
 
             if (ev == null)
             {
-                return NotFound(new
+                return NotFound(new GenericResponse<EventResponseDto>
                 {
-                    Message = "Event Not Found"
+                    StatusCode = HttpStatusCode.NotFound,
+                    Message = "Event not found",
+                    Data = null
                 });
             }
 
             var eventDto = _mapper.Map<EventResponseDto>(ev);
-            return Ok(eventDto);
+            return Ok(new GenericResponse<EventResponseDto>
+            {
+                StatusCode = HttpStatusCode.OK,
+                Message = "Success",
+                Data = eventDto
+            });
         }
 
         [Authorize]
@@ -216,13 +225,12 @@ namespace InnovationLabBackend.Api.Controllers
 
         [Authorize]
         [Consumes("application/json")]
-        [HttpPatch("{id}/registrations/{registrationId}/status", Name = "UpdateEventRegistrationStatus")]
-        public async Task<ActionResult> UpdateEventRegistrationStatus(Guid id, Guid registrationId, [FromBody] UpdateEventRegistrationDto updateEventRegistrationDto)
+        [HttpPatch("/registrations/{registrationId}/status", Name = "UpdateEventRegistrationStatus")]
+        public async Task<ActionResult> UpdateEventRegistrationStatus(Guid registrationId, [FromBody] UpdateEventRegistrationDto updateEventRegistrationDto)
         {
-            var ev = await _eventsRepo.GetEventByIdAsync(id);
             var registration = await _eventsRepo.GetEventRegistrationByIdAsync(registrationId);
 
-            if (ev == null || registration == null)
+            if (registration == null)
             {
                 return NotFound();
             }
