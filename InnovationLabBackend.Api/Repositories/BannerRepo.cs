@@ -1,5 +1,6 @@
 ﻿using InnovationLabBackend.Api.DbContext;
 using InnovationLabBackend.Api.Dtos.Banners;
+using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Interfaces;
 using InnovationLabBackend.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -50,12 +51,11 @@ namespace InnovationLabBackend.Api.Repositories
         }
 
         public async Task<IEnumerable<BannerGetDTO>> GetAllBannerAsync(
-             Enums.BannerType? type = null,
+            MediaType? type = null,
             DateTimeOffset? startDate = null,
             DateTimeOffset? endDate = null,
             DateTimeOffset? createdAfter = null
             )
-
         {
             var query = _dbContext.Banners.AsNoTracking().AsQueryable();
 

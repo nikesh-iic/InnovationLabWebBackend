@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InnovationLabBackend.Api.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace InnovationLabBackend.Api.Dtos.Banners
@@ -10,7 +11,7 @@ namespace InnovationLabBackend.Api.Dtos.Banners
         [Required]
         public required string Url { get; set; }
         [Required]
-        public Enums.BannerType Type { get; set; }
+        public MediaType Type { get; set; }
         [Required]
         public required string Title { get; set; }
         public required string SubTitle { get; set; }

@@ -1,5 +1,8 @@
-﻿namespace InnovationLabBackend.Api.Enums
+﻿using System.Text.Json.Serialization;
+
+namespace InnovationLabBackend.Api.Enums
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum BannerType
     {
         Video,

@@ -10,7 +10,7 @@ namespace InnovationLabBackend.Api.Models
         [Required]
         public required string Url { get; set; }
         [Required]
-        public BannerType Type { get; set; }
+        public MediaType Type { get; set; }
         [Required]
         public required string Title { get; set; }
         public required string SubTitle { get; set; }

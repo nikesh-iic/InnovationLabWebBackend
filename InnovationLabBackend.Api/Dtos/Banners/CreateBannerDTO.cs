@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InnovationLabBackend.Api.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace InnovationLabBackend.Api.Dtos.Banners
@@ -9,7 +10,7 @@ namespace InnovationLabBackend.Api.Dtos.Banners
         [Required]
         public required IFormFile Image { get; set; }
         [Required]
-        public Enums.BannerType Type { get; set; }
+        public MediaType Type { get; set; }
         [Required]
         public string Title { get; set; } = string.Empty;
         [Required]
