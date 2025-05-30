@@ -20,6 +20,10 @@ namespace InnovationLabBackend.Api.Repositories
         {
             var query = _dbContext.Events.AsQueryable();
 
+            Console.WriteLine("****************************");
+            Console.WriteLine(filters.Status);
+            Console.WriteLine("****************************");
+
             // Filter by Status (Ongoing, Upcoming, Past)
             if (filters.Status.HasValue)
             {
@@ -42,7 +46,7 @@ namespace InnovationLabBackend.Api.Repositories
             // Filter by SeriesName
             if (!string.IsNullOrWhiteSpace(filters.SeriesName))
             {
-                query = query.Where(e => e.SeriesName != null && e.SeriesName.Contains(filters.SeriesName, StringComparison.CurrentCultureIgnoreCase));
+                query = query.Where(e => e.SeriesName != null && e.SeriesName.ToLower().Contains(filters.SeriesName.ToLower()));
             }
 
             // Sorting 

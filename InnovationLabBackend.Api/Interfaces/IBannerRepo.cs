@@ -1,4 +1,5 @@
 ﻿using InnovationLabBackend.Api.Dtos.Banners;
+using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Models;
 
 namespace InnovationLabBackend.Api.Interfaces
@@ -6,10 +7,12 @@ namespace InnovationLabBackend.Api.Interfaces
     public interface IBannerRepo
     {
         Task<Banner> CreateBannerAsync(Banner banner);
-        Task<IEnumerable<BannerGetDTO>> GetAllBannerAsync(Enums.BannerType? type = null,
-        DateTimeOffset? startDate = null,
-        DateTimeOffset? endDate = null,
-        DateTimeOffset? createdAfter = null);
+        Task<IEnumerable<BannerGetDTO>> GetAllBannerAsync(
+            MediaType? type = null,
+            DateTimeOffset? startDate = null,
+            DateTimeOffset? endDate = null,
+            DateTimeOffset? createdAfter = null
+        );
         Task<BannerGetDTO> GetBannerByIdAsync(Guid id);
         Task DeleteBannerAsync(Guid id);
         Task<Banner> updateBannerAsync(Guid id, BannerUpdateDTO bannerUpdateDTO);

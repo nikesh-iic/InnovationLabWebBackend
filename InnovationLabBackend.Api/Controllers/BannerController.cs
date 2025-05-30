@@ -66,7 +66,7 @@ namespace InnovationLabBackend.Api.Controllers
 
         [HttpGet(Name = "GetAllBanners")]
         public async Task<ActionResult<IEnumerable<BannerGetDTO>>> GetAllBanners(
-            [FromQuery] Enums.BannerType? type = null,
+            [FromQuery] MediaType? type = null,
             [FromQuery] DateTimeOffset? startDate = null,
             [FromQuery] DateTimeOffset? endDate = null,
             [FromQuery] DateTimeOffset? createdAfter = null)
