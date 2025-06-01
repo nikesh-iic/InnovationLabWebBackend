@@ -120,6 +120,7 @@ builder.Services.AddScoped<IBannerRepo, BannerRepo>();
 builder.Services.AddScoped<ICategoriesRepo, CategoriesRepo>();
 builder.Services.AddScoped<IFaqsRepo, FaqsRepo>();
 builder.Services.AddScoped<IAboutRepo, AboutRepo>();
+builder.Services.AddScoped<IContactsRepo, ContactsRepo>();
 
 var app = builder.Build();
 
