@@ -10,6 +10,7 @@ namespace InnovationLabBackend.Api.Dtos.Events
         public Guid? ParentEventId { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
+        public required IList<string> Highlights { get; set; }
         public required DateTimeOffset StartTime { get; set; }
         public required DateTimeOffset EndTime { get; set; }
         public required string Location { get; set; }

@@ -2,7 +2,7 @@ using AutoMapper;
 using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Models;
 
-namespace InnovationLabBackend.Api.Dtos.Events
+namespace InnovationLabBackend.Api.Dtos.EventRegistrations
 {
     [AutoMap(typeof(EventRegistration), ReverseMap = true)]
     public class EventRegistrationResponseDto
@@ -13,7 +13,7 @@ namespace InnovationLabBackend.Api.Dtos.Events
         public required string Name { get; set; }
         public required string Email { get; set; }
         public string? Phone { get; set; }
-        public List<TeamMemberDto>? TeamMembers { get; set; }
+        public List<TeamMemberResponseDto>? TeamMembers { get; set; }
         public EventRegistrationStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
