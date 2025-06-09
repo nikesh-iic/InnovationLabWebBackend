@@ -161,6 +161,7 @@ namespace InnovationLabBackend.Api.Controllers
         {
             var agenda = await _eventsRepo.GetEventAgendaAsync(id);
             var agendaDto = _mapper.Map<List<EventAgendaResponseDto>>(agenda);
+
             return Ok(new GenericResponse<List<EventAgendaResponseDto>>
             {
                 StatusCode = HttpStatusCode.OK,

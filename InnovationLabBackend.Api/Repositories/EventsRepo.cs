@@ -100,15 +100,18 @@ namespace InnovationLabBackend.Api.Repositories
 
         public async Task<List<EventAgenda>> GetEventAgendaAsync(Guid eventId)
         {
-            var agenda = await _dbContext.EventAgendas
+            var agendas = await _dbContext.EventAgendas
+                .Include(a => a.Items)
                 .Where(a => a.EventId == eventId)
                 .ToListAsync();
-            return agenda;
+            return agendas;
         }
 
         public async Task<EventAgenda?> GetEventAgendaByIdAsync(Guid agendaId)
         {
-            var agenda = await _dbContext.EventAgendas.FirstOrDefaultAsync(a => a.Id == agendaId);
+            var agenda = await _dbContext.EventAgendas
+                .Include(a => a.Items)
+                .FirstOrDefaultAsync(a => a.Id == agendaId);
             return agenda;
         }
 
@@ -127,8 +130,8 @@ namespace InnovationLabBackend.Api.Repositories
 
         public async Task DeleteEventAgendaAsync(EventAgenda eventAgenda)
         {
-            eventAgenda.IsDeleted = true;
-            eventAgenda.DeletedAt = DateTimeOffset.UtcNow;
+            // Hard delete the event agenda
+            _dbContext.Remove(eventAgenda);
             await SaveChangesAsync();
         }
 

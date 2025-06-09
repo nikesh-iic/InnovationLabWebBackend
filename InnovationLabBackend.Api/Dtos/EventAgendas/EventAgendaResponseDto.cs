@@ -1,5 +1,9 @@
+using AutoMapper;
+using InnovationLabBackend.Api.Models;
+
 namespace InnovationLabBackend.Api.Dtos.EventAgendas
 {
+    [AutoMap(typeof(EventAgenda), ReverseMap = true)]
     public class EventAgendaResponseDto
     {
         public Guid Id { get; set; }
@@ -8,7 +12,5 @@ namespace InnovationLabBackend.Api.Dtos.EventAgendas
         public required List<AgendaItemResponseDto> Items { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
-        public bool IsDeleted { get; set; } = false;
-        public DateTimeOffset DeletedAt { get; set; }
     }
 }

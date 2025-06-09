@@ -1,5 +1,9 @@
+using AutoMapper;
+using InnovationLabBackend.Api.Models;
+
 namespace InnovationLabBackend.Api.Dtos.EventAgendas
 {
+    [AutoMap(typeof(AgendaItem), ReverseMap = true)]
     public class AgendaItemResponseDto
     {
         public Guid Id { get; set; }
