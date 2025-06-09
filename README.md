@@ -29,7 +29,7 @@ A simple ASP.NET Core Web API backend for for the Innovation Lab project.
 
 2. **Configure the credentials**
 
-   - Create `appsettings.Development.json` file alongside the `appsettings.json` file inside of `InnovationLabBackend.Api` folder.
+   - Create `appsettings.Development.json` file alongside the `Program.cs` file inside of `InnovationLabBackend.Api` folder.
    - Add the database connection string for PostgreSQL in `appsettings.Development.json` file with the name `DbConnection`.
    - Add the JWT credentials for the issuer, audience, and key in the `appsettings.Development.json` file with the name `Issuer`, `Audience`, and `Key` respectively.
      The `appsettings.Development.json` file should look something like this after all the configurations

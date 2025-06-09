@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using InnovationLabBackend.Api.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,31 @@ namespace InnovationLabBackend.Api.DbContext
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+
+            // Enforcing hard delete for both EventAgenda and AgendaItem data using Cascade behaviour
+            modelBuilder.Entity<EventAgenda>()
+                .HasMany(a => a.Items)
+                .WithOne(i => i.Agenda)
+                .HasForeignKey(i => i.AgendaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Global query filter for soft delete
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var clrType = entityType.ClrType;
+                var isDeletedProp = clrType.GetProperty("IsDeleted");
+                if (isDeletedProp != null && isDeletedProp.PropertyType == typeof(bool))
+                {
+                    // Build the lambda: (e) => !e.IsDeleted
+                    var parameter = Expression.Parameter(clrType, "e");
+                    var prop = Expression.Property(parameter, isDeletedProp);
+                    var filter = Expression.Lambda(
+                        Expression.Equal(prop, Expression.Constant(false)),
+                        parameter
+                    );
+                    modelBuilder.Entity(clrType).HasQueryFilter(filter);
+                }
+            }
 
             // Automatically convert all enums to strings
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
