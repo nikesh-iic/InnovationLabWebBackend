@@ -1,4 +1,5 @@
 using InnovationLabBackend.Api.DbContext;
+using InnovationLabBackend.Api.Dtos.EventRegistrations;
 using InnovationLabBackend.Api.Dtos.Events;
 using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Interfaces;
@@ -19,10 +20,6 @@ namespace InnovationLabBackend.Api.Repositories
         public async Task<List<Event>> GetEventsAsync(EventFilterDto filters)
         {
             var query = _dbContext.Events.AsQueryable();
-
-            Console.WriteLine("****************************");
-            Console.WriteLine(filters.Status);
-            Console.WriteLine("****************************");
 
             // Filter by Status (Ongoing, Upcoming, Past)
             if (filters.Status.HasValue)
@@ -98,6 +95,43 @@ namespace InnovationLabBackend.Api.Repositories
         {
             ev.IsDeleted = true;
             ev.DeletedAt = DateTimeOffset.UtcNow;
+            await SaveChangesAsync();
+        }
+
+        public async Task<List<EventAgenda>> GetEventAgendaAsync(Guid eventId)
+        {
+            var agendas = await _dbContext.EventAgendas
+                .Include(a => a.Items)
+                .Where(a => a.EventId == eventId)
+                .ToListAsync();
+            return agendas;
+        }
+
+        public async Task<EventAgenda?> GetEventAgendaByIdAsync(Guid agendaId)
+        {
+            var agenda = await _dbContext.EventAgendas
+                .Include(a => a.Items)
+                .FirstOrDefaultAsync(a => a.Id == agendaId);
+            return agenda;
+        }
+
+        public async Task<EventAgenda> CreateEventAgendaAsync(EventAgenda eventAgenda)
+        {
+            await _dbContext.EventAgendas.AddAsync(eventAgenda);
+            await SaveChangesAsync();
+            return eventAgenda;
+        }
+
+        public async Task UpdateEventAgendaAsync(EventAgenda eventAgenda)
+        {
+            eventAgenda.UpdatedAt = DateTimeOffset.UtcNow;
+            await SaveChangesAsync();
+        }
+
+        public async Task DeleteEventAgendaAsync(EventAgenda eventAgenda)
+        {
+            // Hard delete the event agenda
+            _dbContext.Remove(eventAgenda);
             await SaveChangesAsync();
         }
 

@@ -35,7 +35,7 @@ namespace InnovationLabBackend.Api.Controllers
 
             if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
             {
-                throw new InvalidOperationException("JWT Key, Issuer or Audience is not configured correctly in appsettings.");
+                throw new InvalidOperationException("JWT Key, Issuer or Audience is not configured correctly");
             }
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
@@ -117,6 +117,7 @@ namespace InnovationLabBackend.Api.Controllers
             }
 
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
+
             if (user == null || !user.IsActive)
             {
                 return Unauthorized(new { Message = "Invalid credentials or user inactive" });
@@ -145,6 +146,7 @@ namespace InnovationLabBackend.Api.Controllers
             {
                 return Unauthorized(new { Message = "User account locked out" });
             }
+
             return Unauthorized(new { Message = "Invalid credentials" });
         }
 

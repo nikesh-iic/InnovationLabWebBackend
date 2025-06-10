@@ -1,6 +1,6 @@
 using InnovationLabBackend.Api.Enums;
 
-namespace InnovationLabBackend.Api.Dtos.Events
+namespace InnovationLabBackend.Api.Dtos.EventRegistrations
 {
     public class EventRegistrationFilterDto
     {
