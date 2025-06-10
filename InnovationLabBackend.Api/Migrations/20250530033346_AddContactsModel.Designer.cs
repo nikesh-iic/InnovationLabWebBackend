@@ -3,6 +3,7 @@ using System;
 using InnovationLabBackend.Api.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InnovationLabBackend.Api.Migrations
 {
     [DbContext(typeof(InnovationLabDbContext))]
-    partial class InnovationLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530033346_AddContactsModel")]
+    partial class AddContactsModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,36 +64,6 @@ namespace InnovationLabBackend.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("About");
-                });
-
-            modelBuilder.Entity("InnovationLabBackend.Api.Models.AgendaItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AgendaId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgendaId");
-
-                    b.ToTable("AgendaItems");
                 });
 
             modelBuilder.Entity("InnovationLabBackend.Api.Models.Banner", b =>
@@ -262,11 +235,6 @@ namespace InnovationLabBackend.Api.Migrations
                     b.Property<DateTimeOffset>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string[]>("Highlights")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("text[]");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -307,31 +275,6 @@ namespace InnovationLabBackend.Api.Migrations
                     b.HasIndex("ParentEventId");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("InnovationLabBackend.Api.Models.EventAgenda", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Day")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("EventAgendas");
                 });
 
             modelBuilder.Entity("InnovationLabBackend.Api.Models.EventRegistration", b =>
@@ -450,6 +393,9 @@ namespace InnovationLabBackend.Api.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -587,9 +533,6 @@ namespace InnovationLabBackend.Api.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -733,17 +676,6 @@ namespace InnovationLabBackend.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("InnovationLabBackend.Api.Models.AgendaItem", b =>
-                {
-                    b.HasOne("InnovationLabBackend.Api.Models.EventAgenda", "Agenda")
-                        .WithMany("Items")
-                        .HasForeignKey("AgendaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Agenda");
-                });
-
             modelBuilder.Entity("InnovationLabBackend.Api.Models.Category", b =>
                 {
                     b.HasOne("InnovationLabBackend.Api.Models.Category", "ParentCategory")
@@ -760,17 +692,6 @@ namespace InnovationLabBackend.Api.Migrations
                         .HasForeignKey("ParentEventId");
 
                     b.Navigation("ParentEvent");
-                });
-
-            modelBuilder.Entity("InnovationLabBackend.Api.Models.EventAgenda", b =>
-                {
-                    b.HasOne("InnovationLabBackend.Api.Models.Event", "Event")
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("InnovationLabBackend.Api.Models.EventRegistration", b =>
@@ -862,11 +783,6 @@ namespace InnovationLabBackend.Api.Migrations
                     b.Navigation("Faqs");
 
                     b.Navigation("Subcategories");
-                });
-
-            modelBuilder.Entity("InnovationLabBackend.Api.Models.EventAgenda", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

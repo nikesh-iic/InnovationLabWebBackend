@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using InnovationLabBackend.Api.Enums;
 
-namespace InnovationLabBackend.Api.Dtos.Events
+namespace InnovationLabBackend.Api.Dtos.EventRegistrations
 {
     public class UpdateEventRegistrationDto
     {

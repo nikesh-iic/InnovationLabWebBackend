@@ -13,6 +13,10 @@ namespace InnovationLabBackend.Api.Dtos.Events
         [Required]
         public required string Description { get; set; }
         [Required]
+        [MinLength(1)]
+        [MaxLength(6)]
+        public required IList<string> Highlights { get; set; }
+        [Required]
         public required DateTimeOffset StartTime { get; set; }
         [Required]
         public required DateTimeOffset EndTime { get; set; }

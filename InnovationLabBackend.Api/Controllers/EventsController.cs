@@ -1,6 +1,8 @@
 using System.Net;
 using AutoMapper;
 using InnovationLabBackend.Api.Dtos;
+using InnovationLabBackend.Api.Dtos.EventAgendas;
+using InnovationLabBackend.Api.Dtos.EventRegistrations;
 using InnovationLabBackend.Api.Dtos.Events;
 using InnovationLabBackend.Api.Enums;
 using InnovationLabBackend.Api.Interfaces;
@@ -19,7 +21,6 @@ namespace InnovationLabBackend.Api.Controllers
         private readonly IMapper _mapper = mapper;
         private readonly IMediaService _mediaService = mediaService;
 
-        [Consumes("application/json")]
         [HttpGet(Name = "GetEvents")]
         public async Task<ActionResult<List<EventResponseDto>>> GetEvents([FromQuery] EventFilterDto filters)
         {
@@ -28,7 +29,6 @@ namespace InnovationLabBackend.Api.Controllers
             return Ok(eventsDto);
         }
 
-        [Consumes("application/json")]
         [HttpGet("{id}", Name = "GetEventById")]
         public async Task<ActionResult<GenericResponse<EventResponseDto>>> GetEventById(Guid id)
         {
@@ -156,9 +156,89 @@ namespace InnovationLabBackend.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/agenda", Name = "GetEventAgenda")]
+        public async Task<ActionResult<GenericResponse<List<EventAgendaResponseDto>>>> GetEventAgenda(Guid id)
+        {
+            var agenda = await _eventsRepo.GetEventAgendaAsync(id);
+            var agendaDto = _mapper.Map<List<EventAgendaResponseDto>>(agenda);
+
+            return Ok(new GenericResponse<List<EventAgendaResponseDto>>
+            {
+                StatusCode = HttpStatusCode.OK,
+                Message = "Event agenda retrieved successfully",
+                Data = agendaDto
+            });
+        }
+
+        [Authorize]
+        [Consumes("application/json")]
+        [HttpPost("{id}/agenda", Name = "CreateEventAgenda")]
+        public async Task<ActionResult<GenericResponse<EventAgendaResponseDto>>> CreateEventAgenda(Guid id, [FromBody] CreateEventAgendaDto agendaDto)
+        {
+            var ev = await _eventsRepo.GetEventByIdAsync(id);
+
+            if (ev == null)
+            {
+                return NotFound(new GenericResponse<EventAgendaResponseDto>
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    Message = "Event not found"
+                });
+            }
+
+            var newAgenda = _mapper.Map<EventAgenda>(agendaDto);
+            newAgenda.EventId = id;
+
+            var createdAgenda = await _eventsRepo.CreateEventAgendaAsync(newAgenda);
+            return CreatedAtAction(nameof(GetEventAgenda), new { id = createdAgenda.EventId }, createdAgenda);
+        }
+
+        [Authorize]
+        [Consumes("application/json")]
+        [HttpPut("/agenda/{agendaId}", Name = "UpdateEventAgenda")]
+        public async Task<ActionResult<GenericResponse>> UpdateEventAgenda(Guid agendaId, [FromBody] UpdateEventAgendaDto updateEventAgendaDto)
+        {
+            var agenda = await _eventsRepo.GetEventAgendaByIdAsync(agendaId);
+
+            if (agenda == null)
+            {
+                return NotFound(new GenericResponse
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    Message = "Event agenda not found"
+                });
+            }
+
+            var agendaToUpdate = _mapper.Map<EventAgenda>(updateEventAgendaDto);
+            await _eventsRepo.UpdateEventAgendaAsync(agendaToUpdate);
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpDelete("/agenda/{agendaId}", Name = "DeleteEventAgenda")]
+        public async Task<ActionResult<GenericResponse>> DeleteEventAgenda(Guid agendaId)
+        {
+            var agenda = await _eventsRepo.GetEventAgendaByIdAsync(agendaId);
+
+            if (agenda == null)
+            {
+                return NotFound(new GenericResponse
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    Message = "Event agenda not found"
+                });
+            }
+
+            var agendaToDelete = _mapper.Map<EventAgenda>(agenda);
+            await _eventsRepo.DeleteEventAgendaAsync(agendaToDelete);
+
+            return NoContent();
+        }
+
         [Consumes("application/json")]
         [HttpPost("{id}/register", Name = "RegisterForEvent")]
-        public async Task<ActionResult<EventRegistration>> RegisterForEvent(Guid id, [FromBody] EventRegistrationDto registrationDto)
+        public async Task<ActionResult<EventRegistrationResponseDto>> RegisterForEvent(Guid id, [FromBody] EventRegistrationDto registrationDto)
         {
             var ev = await _eventsRepo.GetEventByIdAsync(id);
 

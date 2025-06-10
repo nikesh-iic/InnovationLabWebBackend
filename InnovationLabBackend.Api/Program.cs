@@ -10,18 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services
-    .AddControllers()
-    .AddJsonOptions(opts =>
-    {
-        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -131,6 +125,7 @@ builder.Services.AddScoped<IBannerRepo, BannerRepo>();
 builder.Services.AddScoped<ICategoriesRepo, CategoriesRepo>();
 builder.Services.AddScoped<IFaqsRepo, FaqsRepo>();
 builder.Services.AddScoped<IAboutRepo, AboutRepo>();
+builder.Services.AddScoped<IContactsRepo, ContactsRepo>();
 
 var app = builder.Build();
 
