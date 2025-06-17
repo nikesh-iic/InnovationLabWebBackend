@@ -143,7 +143,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowInnovationLabFrontend");
+// app.UseCors("AllowInnovationLabFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
