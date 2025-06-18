@@ -131,7 +131,7 @@ namespace InnovationLabBackend.Api.Repositories
         public async Task DeleteEventAgendaAsync(EventAgenda eventAgenda)
         {
             // Hard delete the event agenda
-            _dbContext.Remove(eventAgenda);
+            _dbContext.EventAgendas.Remove(eventAgenda);
             await SaveChangesAsync();
         }
 
