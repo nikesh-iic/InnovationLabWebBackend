@@ -72,7 +72,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowInnovationLabFrontend", policy =>
     {
-        policy.WithOrigins("*")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
