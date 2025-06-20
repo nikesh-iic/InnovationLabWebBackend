@@ -68,15 +68,15 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 .AddEntityFrameworkStores<InnovationLabDbContext>()
 .AddDefaultTokenProviders();
 
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowInnovationLabFrontend", policy =>
-//     {
-//         policy.WithOrigins("https://innovation.iic.edu.np")
-//               .AllowAnyHeader()
-//               .AllowAnyMethod();
-//     });
-// });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowInnovationLabFrontend", policy =>
+    {
+        policy.WithOrigins("*")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
